@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+
+# Conda
+.conda/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Build
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.*
+
+# Database
+*.db-shm
+*.db-wal
+
+# Large generated datasets
+storage/
+datasets/
+exports/
+captures/
+output/
+
+# Temporary files
+tmp/
+temp/
