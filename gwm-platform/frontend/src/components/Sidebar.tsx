@@ -13,6 +13,7 @@ const NAV = [
   { to: '/jobs',          icon: Briefcase,       label: 'Simulations' },
   { to: '/quality',       icon: BarChart3,       label: 'Dataset Quality' },
   { to: '/countries',     icon: Globe,           label: 'Country Profiles' },
+  { to: '/geography',     icon: Globe,           label: 'Geography Engine' },
 ]
 
 export default function Sidebar() {
