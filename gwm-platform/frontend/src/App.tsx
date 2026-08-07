@@ -10,6 +10,7 @@ import Projects from './pages/Projects'
 import DatasetQuality from './pages/DatasetQuality'
 import CountryProfiles from './pages/CountryProfiles'
 import Geography from './pages/Geography'
+import WorldGeneration from './pages/WorldGeneration'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import React from 'react'
@@ -45,7 +46,8 @@ export default function App() {
             <Route path="/jobs"      element={<ProtectedRoute><Jobs /></ProtectedRoute>} />
             <Route path="/quality"   element={<ProtectedRoute><DatasetQuality /></ProtectedRoute>} />
             <Route path="/countries" element={<ProtectedRoute><CountryProfiles /></ProtectedRoute>} />
-            <Route path="/geography" element={<ProtectedRoute><Geography /></ProtectedRoute>} />
+             <Route path="/geography" element={<ProtectedRoute><Geography /></ProtectedRoute>} />
+             <Route path="/world" element={<ProtectedRoute><WorldGeneration /></ProtectedRoute>} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>

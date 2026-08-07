@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom'
 import {
   LayoutDashboard, Clapperboard, Briefcase,
-  Cpu, ChevronRight, LogOut, Folder, BarChart3, Globe, Sparkles
+  Cpu, ChevronRight, LogOut, Folder, BarChart3, Globe, Sparkles, Box
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 
@@ -14,6 +14,7 @@ const NAV = [
   { to: '/quality',       icon: BarChart3,       label: 'Dataset Quality' },
   { to: '/countries',     icon: Globe,           label: 'Country Profiles' },
   { to: '/geography',     icon: Globe,           label: 'Geography Engine' },
+  { to: '/world',         icon: Box,             label: 'World Generation' },
 ]
 
 export default function Sidebar() {
