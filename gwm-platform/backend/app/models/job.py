@@ -26,3 +26,4 @@ class Job(Base):
 
     project = relationship("Project", back_populates="jobs")
     dataset = relationship("Dataset", back_populates="job", uselist=False)
+    world_plan = relationship("WorldPlan", back_populates="job", uselist=False)
