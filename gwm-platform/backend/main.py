@@ -6,6 +6,7 @@ from app.api import prompt  # Build 3: AI Prompt Engine
 from app.api import countries  # Build 4: Country Profile Engine
 from app.api import geography  # Build 5: Geography Engine
 from app.api import world  # Build 6: World Generation Engine
+from app.api import execution  # Build 7: Execution Engine
 
 Base.metadata.create_all(bind=engine)
 
@@ -29,6 +30,7 @@ app.include_router(prompt.router)   # Build 3: POST /prompt/parse, /prompt/gener
 app.include_router(countries.router) # Build 4: GET|POST|PUT|DELETE /countries, POST /countries/scenario/expand
 app.include_router(geography.router) # Build 5: POST /geography/resolve, /geography/build
 app.include_router(world.router)      # Build 6: POST /world/plan, /world/validate, /world/build
+app.include_router(execution.router)  # Build 7: POST /execution/start, /execution/{id}/stop, etc.
 
 @app.get("/")
 def read_root():
