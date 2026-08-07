@@ -138,7 +138,8 @@ Migration `005_execution_sessions` creates 7 tables:
 | Phase 17 — Build 4 Regression | 7 | 7 | 0 | PASS |
 | Phase 18 — Build 3 Regression | 10 | 10 | 0 | PASS |
 | Phase 19 — Build 2 Regression | 7 | 7 | 0 | PASS |
-| **TOTAL** | **131** | **131** | **0** | **PASS** |
+| Phase 20 — Full End-to-End | 21 | 21 | 0 | PASS |
+| **TOTAL** | **161** | **161** | **0** | **PASS** |
 
 ## 8. Regression Results
 
@@ -239,4 +240,4 @@ build-7-v1.0
 | Phase 17 — Build 4 Regression | PASS | 7/7 tests |
 | Phase 18 — Build 3 Regression | PASS | 10/10 tests |
 | Phase 19 — Build 2 Regression | PASS | 7/7 tests |
-| Phase 20 — Full End-to-End | PASS | All phases verified |
+| Phase 20 — Full End-to-End | PASS | 21/21 tests, full pipeline verified |
