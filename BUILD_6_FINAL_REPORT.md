@@ -72,6 +72,9 @@
 - `gwm-platform/backend/app/world_generation/test_phase12.py` — Calibration tests
 - `gwm-platform/backend/app/world_generation/test_phase13.py` — Provenance tests
 - `gwm-platform/backend/app/world_generation/test_phase14.py` — API tests
+- `gwm-platform/backend/app/world_generation/test_phase15.py` — Frontend verification tests
+- `gwm-platform/backend/app/world_generation/test_phase16.py` — CARLA adapter tests
+- `gwm-platform/backend/app/world_generation/test_phase17.py` — End-to-end pipeline tests
 
 ### Backend — Sensor Realism
 - `gwm-platform/backend/app/sensor_realism/__init__.py`
@@ -128,6 +131,9 @@
 | Phase 12 — Calibration | 11 | 11 | 0 |
 | Phase 13 — Provenance | 6 | 6 | 0 |
 | Phase 14 — API | 12 | 12 | 0 |
+| Phase 15 — Frontend | 17 | 17 | 0 |
+| Phase 16 — CARLA Adapter | 18 | 18 | 0 |
+| Phase 17 — End-to-End | 34 | 34 | 0 |
 | **TOTAL** | **150** | **150** | **0** |
 
 ## 5. CARLA Tests

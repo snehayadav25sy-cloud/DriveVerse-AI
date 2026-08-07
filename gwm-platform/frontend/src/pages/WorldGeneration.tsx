@@ -6,7 +6,7 @@ export default function WorldGeneration() {
   const [country, setCountry] = useState('india');
   const [scenario, setScenario] = useState('monsoon_evening');
   const [worldSeed, setWorldSeed] = useState(12345);
-  const { generatePlan, generating, worldData } = useWorldGeneration();
+  const { generatePlan, generating, worldData, error } = useWorldGeneration();
 
   const handleGenerate = () => {
     generatePlan({
@@ -115,6 +115,12 @@ export default function WorldGeneration() {
           {generating ? 'Generating...' : 'Generate World Plan'}
         </button>
       </div>
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
+          {error.message || 'Failed to generate world plan'}
+        </div>
+      )}
 
       {stats && (
         <div className="bg-white rounded-lg shadow p-6">
