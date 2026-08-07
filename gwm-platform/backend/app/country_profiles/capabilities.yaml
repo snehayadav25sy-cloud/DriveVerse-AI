@@ -1,0 +1,43 @@
+# capabilities.yaml — Declares what each supported simulator version can render
+# Used by the Capability Checker component of the Country Compiler.
+
+simulators:
+
+  carla_0_9_16:
+    version: "0.9.16"
+    features:
+      tram: false
+      train: false
+      auto_rickshaw: false
+      rickshaw: false
+      snow_accumulation: false      # CARLA renders precipitation but not accumulated snow on ground
+      deformable_terrain: false
+      camel: false
+      metro: false
+      double_decker_bus: false
+      traffic_light_localization: true
+      lidar: true
+      radar: true
+      rgb_camera: true
+      semantic_segmentation: true
+      depth_camera: true
+      gnss: true
+      imu: true
+      custom_maps: true             # Supports .xodr map loading (Build 5)
+      weather_rain: true
+      weather_fog: true
+      weather_wind: true
+      weather_cloudiness: true
+      weather_sun_position: true
+      multi_actor_npc: true
+      pedestrian_ai: true
+
+  beamng_latest:
+    version: "latest"
+    features:
+      snow_accumulation: true
+      deformable_terrain: true
+      lidar: true
+      rgb_camera: true
+      auto_rickshaw: false
+      tram: false

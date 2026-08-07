@@ -1,6 +1,6 @@
 """
 prompt-engine/validators/validator.py
-=======================================
+======================================
 Build 3 — Phase 3: Plausibility validator
 
 Applies semantic rules beyond basic schema validation.
@@ -14,18 +14,20 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from dataclasses import dataclass, field
 from typing import List
-from schemas.scenario_schema import ScenarioConfig
+from schemas.scenario_schema import ScenarioConfig, SUPPORTED_MAPS
 
 
 # ── Rules tables ──────────────────────────────────────────────────────────────
 
 # Maps with hot/dry climates — heavy snow is implausible
-_DRY_CLIMATE_MAPS: frozenset[str] = frozenset({"Town01"})  # can extend per country
+_HOT_CLIMATE_CITIES: frozenset[str] = frozenset({
+    "dubai", "abu dhabi", "riyadh", "doha",
+})
 
 # Maps that represent highway-only / no-pedestrian zones
-_NO_PEDESTRIAN_MAPS: frozenset[str] = frozenset({"Town06"})  # multi-lane only
+_NO_PEDESTRIAN_MAPS: frozenset[str] = frozenset({"Town06"})
 
-# Maximum total vehicle count per map (Town06 big, Town01 smaller)
+# Maximum total vehicle count per map
 _MAP_VEHICLE_LIMITS: dict[str, int] = {
     "Town01": 200, "Town02": 150, "Town03": 300,
     "Town04": 250, "Town05": 350, "Town06": 500,
@@ -34,9 +36,7 @@ _MAP_VEHICLE_LIMITS: dict[str, int] = {
 
 # Sensor combinations that are physically nonsensical
 _INVALID_SENSOR_COMBOS: list[tuple[frozenset[str], str]] = [
-    # optical_flow without any camera — no image to compute flow from
     (frozenset({"optical_flow"}), "rgb"),
-    # instance segmentation without semantic — instance requires semantic pass
     (frozenset({"instance"}), "semantic"),
 ]
 
@@ -76,17 +76,17 @@ def validate_scenario(cfg: ScenarioConfig, source_prompt: str = "") -> Validatio
     """
     result = ValidationResult()
     prompt_lower = source_prompt.lower()
+    carla_map = cfg.carla_map or "Town01"
 
     # ── Rule 1: Snow in hot-climate / desert-profile scenarios ───────────────
-    # Check weather label OR source prompt text
-    heavy_snow_in_weather = cfg.weather.rain < 0.1 and cfg.weather.fog < 0.3 and \
-                            ("snow" in prompt_lower or "blizzard" in prompt_lower or "snowstorm" in prompt_lower)
-    if heavy_snow_in_weather and (
-        ("dubai" in prompt_lower) or
-        ("desert" in prompt_lower) or
-        (cfg.city and cfg.city.lower() in {"dubai", "abu dhabi", "riyadh", "doha"}) or
+    is_snow_prompt = "snow" in prompt_lower or "blizzard" in prompt_lower or "snowstorm" in prompt_lower
+    is_hot_climate = (
+        "dubai" in prompt_lower or
+        "desert" in prompt_lower or
+        (cfg.city and cfg.city.lower() in _HOT_CLIMATE_CITIES) or
         (cfg.country and cfg.country.lower() in {"uae", "saudi arabia", "qatar", "kuwait"})
-    ):
+    )
+    if is_snow_prompt and is_hot_climate:
         result.reject(
             "Scenario rejected: heavy snow is implausible in a desert / hot-climate location "
             f"(city={cfg.city}, country={cfg.country}). "
@@ -95,19 +95,19 @@ def validate_scenario(cfg: ScenarioConfig, source_prompt: str = "") -> Validatio
         )
 
     # ── Rule 2: Pedestrians on highway-only maps ─────────────────────────────
-    if cfg.map in _NO_PEDESTRIAN_MAPS and cfg.pedestrians > 0:
+    if carla_map in _NO_PEDESTRIAN_MAPS and cfg.pedestrians > 0:
         result.reject(
             f"Scenario rejected: pedestrians ({cfg.pedestrians}) are not supported on "
-            f"{cfg.map}, which is a highway-only multi-lane map with no walkable areas. "
+            f"{carla_map}, which is a highway-only multi-lane map with no walkable areas. "
             "Remove pedestrians or choose a different map."
         )
 
     # ── Rule 3: Vehicle count exceeds per-map limit ───────────────────────────
-    map_limit = _MAP_VEHICLE_LIMITS.get(cfg.map, 300)
-    if cfg.traffic.total > map_limit:
+    map_limit = _MAP_VEHICLE_LIMITS.get(carla_map, 300)
+    if cfg.vehicles.total > map_limit:
         result.reject(
-            f"Scenario rejected: vehicle count ({cfg.traffic.total}) exceeds the "
-            f"supported limit for {cfg.map} ({map_limit}). "
+            f"Scenario rejected: vehicle count ({cfg.vehicles.total}) exceeds the "
+            f"supported limit for {carla_map} ({map_limit}). "
             "Reduce vehicle counts or choose a larger map (Town05 or Town10HD)."
         )
 
@@ -119,7 +119,7 @@ def validate_scenario(cfg: ScenarioConfig, source_prompt: str = "") -> Validatio
                 "Supported vehicles: cars, trucks, buses, motorcycles, bicycles. "
                 "Supported pedestrians: people on foot."
             )
-            break   # one rejection is enough
+            break
 
     # ── Rule 5: Sensor combination physics ───────────────────────────────────
     sensor_set = frozenset(cfg.sensors)
@@ -135,18 +135,17 @@ def validate_scenario(cfg: ScenarioConfig, source_prompt: str = "") -> Validatio
             )
 
     # ── Rule 6: LiDAR performance degradation in heavy fog (warning only) ────
-    if "lidar" in sensor_set and cfg.weather.fog > 0.6:
+    if "lidar" in sensor_set and cfg.weather == "Fog":
         result.warn(
-            f"Warning: heavy fog (fog={cfg.weather.fog:.1f}) will severely reduce "
-            "LiDAR effective range to approximately 15–30 m. "
+            "Warning: heavy fog will severely reduce "
+            "LiDAR effective range to approximately 15-30 m. "
             "Consider reducing fog density or adding a second sensor modality."
         )
 
-    # ── Rule 7: All-zero weather but night request (lighting mismatch) ────────
-    if (cfg.time_of_day and "night" in str(cfg.time_of_day).lower()) and \
-            cfg.weather.cloudiness < 0.1:
+    # ── Rule 7: Night without cloudiness (lighting mismatch) ─────────────────
+    if cfg.time_of_day == "Night" and (cfg.weather is None or cfg.weather == "Clear"):
         result.warn(
-            "Note: night-time simulation with zero cloudiness will use full "
+            "Note: night-time simulation with clear weather will use full "
             "moon/streetlight lighting in CARLA. Add cloudiness > 0.5 for darker scenes."
         )
 

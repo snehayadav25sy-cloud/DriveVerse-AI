@@ -1,42 +1,41 @@
 import api from './api'
-import type { CountryProfile } from '../types'
 
-// Mock data as fallback when backend is offline
-export const MOCK_COUNTRIES: CountryProfile[] = [
-  {
-    code: 'TH',
-    display_name: 'Thailand',
-    driving_side: 'left',
-    accurate_lane_discipline: false,
-    common_road_types: ['urban', 'mixed_traffic', 'coastal'],
-    speed_limit_kmh: 80,
-    notes: 'High motorcycle density, monsoon weather patterns. Left-hand traffic not yet accurately represented.',
-  },
-  {
-    code: 'BH',
-    display_name: 'Bahrain',
-    driving_side: 'right',
-    accurate_lane_discipline: true,
-    common_road_types: ['urban', 'highway', 'coastal'],
-    speed_limit_kmh: 120,
-    notes: 'Modern passenger vehicles and highways. Predominantly clear/hot weather.',
-  },
-  {
-    code: 'AE',
-    display_name: 'Dubai / UAE',
-    driving_side: 'right',
-    accurate_lane_discipline: true,
-    common_road_types: ['highway', 'urban', 'desert'],
-    speed_limit_kmh: 140,
-    notes: 'Premium/luxury vehicles. Wide high-speed highways. Desert sun glare conditions.',
-  },
-]
-
-export const fetchCountries = async (): Promise<CountryProfile[]> => {
-  try {
-    const { data } = await api.get<CountryProfile[]>('/countries')
-    return data
-  } catch {
-    return MOCK_COUNTRIES
+export interface BackendCountryProfile {
+  id: string
+  version: string
+  drive_side: 'left' | 'right'
+  vehicle_classes: string[]
+  weather_presets: string[]
+  supports: {
+    auto_rickshaw: boolean
+    tram: boolean
+    train: boolean
+    snow_accumulation: boolean
+    deformable_terrain: boolean
   }
+}
+
+export const fetchCountries = async (): Promise<BackendCountryProfile[]> => {
+  const { data } = await api.get<BackendCountryProfile[]>('/countries')
+  return data
+}
+
+export const getCountry = async (id: string): Promise<any> => {
+  const { data } = await api.get(`/countries/${id}`)
+  return data
+}
+
+export const createCountry = async (yamlContent: string): Promise<any> => {
+  const { data } = await api.post('/countries', { yaml_content: yamlContent })
+  return data
+}
+
+export const updateCountry = async (id: string, yamlContent: string): Promise<any> => {
+  const { data } = await api.put(`/countries/${id}`, { yaml_content: yamlContent })
+  return data
+}
+
+export const deleteCountry = async (id: string): Promise<any> => {
+  const { data } = await api.delete(`/countries/${id}`)
+  return data
 }

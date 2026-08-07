@@ -13,6 +13,42 @@ from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, Field, validator
 
 
+# ── Supported value sets ───────────────────────────────────────────────────────
+
+SUPPORTED_MAPS: frozenset[str] = frozenset({
+    "Town01", "Town02", "Town03",
+    # Town04-Town07, Town10HD excluded: not produced by parser,
+    # not confirmed loaded in this CARLA 0.9.16 installation.
+    # Re-add here and in _MAP_ALIASES / VALID_MAPS when verified.
+})
+
+SUPPORTED_SENSORS: frozenset[str] = frozenset({
+    "rgb", "lidar", "radar", "depth",
+    "semantic", "instance", "optical_flow",
+})
+
+SUPPORTED_FORMATS: frozenset[str] = frozenset({
+    "kitti", "coco", "nuscenes",
+})
+
+SUPPORTED_ROAD_TYPES: frozenset[str] = frozenset({
+    "Highway", "City", "Rural", "Intersection", "Residential",
+    "Suburban", "Parking",
+})
+
+SUPPORTED_WEATHER: frozenset[str] = frozenset({
+    "Clear", "Rain", "Fog", "Snow", "Storm", "Overcast",
+})
+
+SUPPORTED_TIME_OF_DAY: frozenset[str] = frozenset({
+    "Day", "Night", "Dusk", "Dawn",
+})
+
+SUPPORTED_TRAFFIC_DENSITY: frozenset[str] = frozenset({
+    "None", "Light", "Medium", "Heavy", "Gridlock",
+})
+
+
 # ── Sub-models ────────────────────────────────────────────────────────────────
 
 class VehicleMix(BaseModel):
@@ -73,6 +109,7 @@ class ScenarioConfig(BaseModel):
     country:  Optional[str] = None   # "Japan", "UAE", "UK" — Build 4 hook
     city:     Optional[str] = None   # "Tokyo", "Dubai", "London"
     road_type: Optional[str] = None  # "Highway" | "City" | "Rural" | "Intersection" | "Parking"
+    modifiers: List[str] = Field(default_factory=list)
 
     # ── Environment ────────────────────────────────────────────────────────────
     weather:     Optional[str] = None  # "Clear" | "Rain" | "Fog" | "Snow" | "Storm" | "Overcast"
@@ -101,22 +138,74 @@ class ScenarioConfig(BaseModel):
     explanation: List[str]       = Field(default_factory=list)
     unrecognised_tokens: List[str] = Field(default_factory=list)
 
+    # ── LLM metadata ─────────────────────────────────────────────────────────
+    source_prompt: Optional[str] = None
+    llm_provider: Optional[str] = None
+
     # ── Pipeline results (attached by each stage) ─────────────────────────────
     validation:    Optional[ValidationResult]  = None
     optimizer_changes: List[OptimizerChange]   = Field(default_factory=list)
     translation:   Optional[TranslationResult] = None
 
+    @validator("sensors", each_item=True)
+    def sensors_must_be_supported(cls, v):
+        if v not in SUPPORTED_SENSORS:
+            raise ValueError(
+                f"Unsupported sensor: '{v}'. Supported: {sorted(SUPPORTED_SENSORS)}"
+            )
+        return v
+
     @validator("sensors")
     def sensors_not_empty(cls, v):
         if not v:
             raise ValueError("sensors must contain at least one value")
-        return list(set(v))
+        return list(dict.fromkeys(v))
 
     @validator("export_format", pre=True)
     def normalise_format(cls, v):
         return v.lower() if isinstance(v, str) else v
 
-    def to_job_fields(self) -> dict:
+    @validator("carla_map")
+    def carla_map_must_be_supported(cls, v):
+        if v is not None and v not in SUPPORTED_MAPS:
+            raise ValueError(
+                f"Unsupported carla_map: '{v}'. Supported: {sorted(SUPPORTED_MAPS)}"
+            )
+        return v
+
+    @validator("road_type")
+    def road_type_must_be_supported(cls, v):
+        if v is not None and v not in SUPPORTED_ROAD_TYPES:
+            raise ValueError(
+                f"Unsupported road_type: '{v}'. Supported: {sorted(SUPPORTED_ROAD_TYPES)}"
+            )
+        return v
+
+    @validator("weather")
+    def weather_must_be_supported(cls, v):
+        if v is not None and v not in SUPPORTED_WEATHER:
+            raise ValueError(
+                f"Unsupported weather: '{v}'. Supported: {sorted(SUPPORTED_WEATHER)}"
+            )
+        return v
+
+    @validator("time_of_day")
+    def time_of_day_must_be_supported(cls, v):
+        if v is not None and v not in SUPPORTED_TIME_OF_DAY:
+            raise ValueError(
+                f"Unsupported time_of_day: '{v}'. Supported: {sorted(SUPPORTED_TIME_OF_DAY)}"
+            )
+        return v
+
+    @validator("traffic_density")
+    def traffic_density_must_be_supported(cls, v):
+        if v is not None and v not in SUPPORTED_TRAFFIC_DENSITY:
+            raise ValueError(
+                f"Unsupported traffic_density: '{v}'. Supported: {sorted(SUPPORTED_TRAFFIC_DENSITY)}"
+            )
+        return v
+
+    def to_job_params(self) -> dict:
         """
         Extract the flat fields needed to create a Job record.
         Derives carla_map from translation if available.

@@ -37,6 +37,11 @@ from app.database.database import SessionLocal
 from app.models.project import Project  # keeps relationship mapping alive
 from app.models.job import Job
 from app.models.dataset import Dataset
+from app.models.prompt import Scenario as ScenarioModel
+from app.country_profiles import registry, compiler
+from app.country_profiles.models import RealityScenario
+from simulator.carla.population import filter_spawn_points, spawn_background_traffic, spawn_pedestrian_crowd
+import random
 
 # ── CARLA simulator modules ──────────────────────────────────────────────────
 try:
@@ -88,6 +93,31 @@ def generate_dataset_job(db, job) -> tuple:
     output_dir  = os.path.join(STORAGE_DIR, f"dataset_{job_id}")
     os.makedirs(output_dir, exist_ok=True)
 
+    # ── Build 4: Country scenario compilation ─────────────────────────────────
+    scenario_row = db.query(ScenarioModel).filter(ScenarioModel.job_id == job.id).first()
+    s_json = scenario_row.scenario_json if scenario_row else {}
+
+    country = s_json.get("country") or "usa"
+    weather = s_json.get("weather") or "sunny"
+    traffic = s_json.get("traffic_density") or "normal"
+    time_of_day = s_json.get("time_of_day") or "noon"
+    road_type = s_json.get("road_type") or "highway"
+    modifiers = s_json.get("modifiers") or []
+
+    # Compile country configuration
+    reality = RealityScenario(
+        country=country,
+        weather=weather,
+        traffic=traffic,
+        time_of_day=time_of_day,
+        road_type=road_type,
+        modifiers=modifiers
+    )
+    resolved, provenance = compiler.compile_scenario(reality)
+    profile = registry.get_profile(country) or registry.get_profile("usa")
+
+    print(f"[Worker] Compiled country profile '{country}': drive_side={resolved.drive_side}, difficulty={resolved.difficulty_score}")
+
     # ── progress helper ───────────────────────────────────────────────────────
     def set_progress(pct: float):
         job.progress = min(float(pct), 99.0)
@@ -111,9 +141,40 @@ def generate_dataset_job(db, job) -> tuple:
             carla_world = load_simulation_map(carla_client, map_name)
             set_progress(10)
 
-            vehicle = spawn_ego_vehicle(carla_world)
+            # Apply compiled weather settings
+            import carla
+            carla_weather = carla.WeatherParameters(
+                cloudiness=resolved.weather.cloudiness,
+                precipitation=resolved.weather.precipitation,
+                precipitation_deposits=resolved.weather.precipitation_deposits,
+                wind_intensity=resolved.weather.wind_intensity,
+                sun_azimuth_angle=resolved.weather.sun_azimuth_angle,
+                sun_altitude_angle=resolved.weather.sun_altitude_angle,
+                fog_density=resolved.weather.fog_density,
+                fog_distance=resolved.weather.fog_distance,
+                wetness=resolved.weather.wetness
+            )
+            carla_world.set_weather(carla_weather)
+            print(f"[Worker] Applied weather: precipitation={resolved.weather.precipitation}, fog={resolved.weather.fog_density}")
+
+            # Programmatic spawn point filtering based on road_type
+            filtered_spawns = filter_spawn_points(carla_world, road_type)
+            ego_spawn = random.choice(filtered_spawns) if filtered_spawns else random.choice(carla_world.get_map().get_spawn_points())
+
+            # Find appropriate ego blueprint
+            ego_bp = carla_world.get_blueprint_library().find("vehicle.tesla.model3")
+            vehicle = carla_world.spawn_actor(ego_bp, ego_spawn)
+            vehicle.set_autopilot(True)
             actors.append(vehicle)
             set_progress(20)
+
+            # Spawn background traffic and pedestrians matching target density/mix
+            bg_vehicles = spawn_background_traffic(carla_world, carla_client, resolved, road_type, traffic)
+            actors.extend(bg_vehicles)
+
+            bg_walkers, bg_controllers = spawn_pedestrian_crowd(carla_world, carla_client, resolved, traffic)
+            actors.extend(bg_walkers)
+            actors.extend(bg_controllers)
 
             # Attach only the sensors requested for this job
             sensors_dict = {}
@@ -166,7 +227,6 @@ def generate_dataset_job(db, job) -> tuple:
             }
             for cam_name, (x, y, z, yaw) in rig_mounts.items():
                 if cam_name in sensors:
-                    import carla
                     cam_bp = carla_world.get_blueprint_library().find('sensor.camera.rgb')
                     cam_bp.set_attribute('image_size_x', '1280')
                     cam_bp.set_attribute('image_size_y', '720')
@@ -190,7 +250,7 @@ def generate_dataset_job(db, job) -> tuple:
         except Exception as e:
             print(f"[Worker] CARLA failed: {e}. Failing job.")
             job.status = 'failed'
-            job.error = str(e)  # assuming error field exists or we just fail it
+            job.error = str(e)
             db.commit()
             return
 
@@ -240,7 +300,25 @@ def generate_dataset_job(db, job) -> tuple:
                 except Exception:
                     pass
 
-    # ── write metadata JSON ───────────────────────────────────────────────────
+    # ── write Build 4 scenario outputs ────────────────────────────────────────
+    # 1. resolved_scenario.json
+    with open(os.path.join(output_dir, "resolved_scenario.json"), "w") as f:
+        json.dump(resolved.model_dump(), f, indent=2)
+
+    # 2. country_profile.json
+    with open(os.path.join(output_dir, "country_profile.json"), "w") as f:
+        json.dump(profile.model_dump(), f, indent=2)
+
+    # 3. compiler_log.json
+    compiler_log = {
+        "status": "success",
+        "warnings": resolved.warnings,
+        "errors": []
+    }
+    with open(os.path.join(output_dir, "compiler_log.json"), "w") as f:
+        json.dump(compiler_log, f, indent=2)
+
+    # 4. metadata.json
     meta = {
         "sensors":     sensors,
         "frame_count": frames,
@@ -251,9 +329,53 @@ def generate_dataset_job(db, job) -> tuple:
         "annotation_count": annotation_count,
         "spec":        _sensor_metadata(sensors),
         "timestamp":   datetime.now(timezone.utc).isoformat(),
+        "difficulty_score": resolved.difficulty_score,
+        "quality_score": resolved.quality_score,
+        "warnings": resolved.warnings,
     }
     with open(os.path.join(output_dir, "metadata.json"), "w") as f:
         json.dump(meta, f, indent=2)
+
+    # 5. provenance.json
+    with open(os.path.join(output_dir, "provenance.json"), "w") as f:
+        json.dump(provenance, f, indent=2)
+
+    # 6. capabilities.json
+    import yaml as _yaml
+    capabilities_data = {}
+    cap_path = os.path.abspath(os.path.join(backend_path, "app", "country_profiles", "capabilities.yaml"))
+    try:
+        if os.path.exists(cap_path):
+            with open(cap_path, 'r') as cap_f:
+                capabilities_data = _yaml.safe_load(cap_f)
+    except Exception as e:
+        capabilities_data = {"error": f"Failed to load capabilities: {e}"}
+    with open(os.path.join(output_dir, "capabilities.json"), "w") as f:
+        json.dump(capabilities_data, f, indent=2)
+
+    # 7. quality.json
+    quality_report = {
+        "overall_quality_score": resolved.quality_score,
+        "class_balance": resolved.vehicles,
+        "pedestrian_density": resolved.pedestrians.density,
+        "warnings_count": len(resolved.warnings)
+    }
+    with open(os.path.join(output_dir, "quality.json"), "w") as f:
+        json.dump(quality_report, f, indent=2)
+
+    # 8. difficulty.json
+    difficulty_report = {
+        "overall_difficulty_score": resolved.difficulty_score,
+        "factors": {
+            "weather": weather,
+            "time_of_day": time_of_day,
+            "traffic_density": traffic,
+            "road_type": road_type,
+            "modifiers": modifiers
+        }
+    }
+    with open(os.path.join(output_dir, "difficulty.json"), "w") as f:
+        json.dump(difficulty_report, f, indent=2)
 
     # ── ZIP ───────────────────────────────────────────────────────────────────
     set_progress(90)

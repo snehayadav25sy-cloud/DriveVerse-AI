@@ -15,7 +15,7 @@ except ImportError:
 
 REQUIRED_VERSION = "0.9.16"
 
-def connect(host=None, port=2000, timeout=20.0):
+def connect(host=None, port=2000, timeout=60.0):
     if not _CARLA_AVAILABLE:
         raise ImportError(
             "The 'carla' package is not installed. "
@@ -50,7 +50,7 @@ def connect(host=None, port=2000, timeout=20.0):
             f"be launched — check for other CARLA installs."
         )
 
-    client.set_timeout(5.0)
+    client.set_timeout(30.0)
     deadline = time.time() + timeout
     attempt = 0
     while time.time() < deadline:

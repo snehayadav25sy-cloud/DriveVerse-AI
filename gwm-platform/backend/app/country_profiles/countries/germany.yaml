@@ -1,0 +1,72 @@
+id: germany
+version: 1.0.0
+schema_version: 1
+author: DriveVerse
+updated: "2026-08-06"
+
+supports:
+  auto_rickshaw: false
+  tram: false
+  train: false
+  snow_accumulation: false
+  deformable_terrain: false
+
+rules:
+  drive_side: right
+  speed_limits:
+    highway: 130              # Autobahn has no general limit but 130 km/h recommended
+    urban: 50
+    residential: 30
+    school: 20
+  signal_duration_s: 30
+  behavior:
+    aggressiveness: 0.55      # Assertive but disciplined
+    horn_frequency: 0.05
+    stopping_distance_m: 5.0
+    lane_discipline: 0.95     # Excellent lane discipline — keep-right rule strictly observed
+
+vehicle_mix:
+  sedan: 0.35
+  suv: 0.25
+  van: 0.15
+  hgv: 0.10
+  motorcycle: 0.08
+  bicycle: 0.07               # Germany has a high bicycle modal share
+
+pedestrians:
+  density: 0.35
+  walking_speed: 1.5          # Faster walking pace typical of German cities
+
+weather_presets:
+  sunny:
+    rain: 0.0
+    cloudiness: 20.0
+    wind: 8.0
+    wetness: 0.0
+    fog: 0.0
+    sun_altitude: 45.0
+    sun_azimuth: 0.0
+  rain:
+    rain: 35.0
+    cloudiness: 80.0
+    wind: 20.0
+    wetness: 30.0
+    fog: 8.0
+    sun_altitude: 20.0
+    sun_azimuth: 0.0
+  snow:
+    rain: 0.0
+    cloudiness: 90.0
+    wind: 25.0
+    wetness: 0.0
+    fog: 10.0
+    sun_altitude: 8.0
+    sun_azimuth: 0.0
+  fog:
+    rain: 0.0
+    cloudiness: 70.0
+    wind: 5.0
+    wetness: 5.0
+    fog: 65.0
+    sun_altitude: 20.0
+    sun_azimuth: 0.0

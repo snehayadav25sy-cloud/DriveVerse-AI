@@ -1,0 +1,65 @@
+id: usa
+version: 1.0.0
+schema_version: 1
+author: DriveVerse
+updated: "2026-08-06"
+
+supports:
+  auto_rickshaw: false
+  tram: false
+  train: false
+  snow_accumulation: false
+  deformable_terrain: false
+
+rules:
+  drive_side: right
+  speed_limits:
+    highway: 113            # 70 mph interstate
+    urban: 56               # 35 mph typical urban
+    residential: 40         # 25 mph residential
+    school: 25
+  signal_duration_s: 35
+  behavior:
+    aggressiveness: 0.50
+    horn_frequency: 0.10
+    stopping_distance_m: 4.0
+    lane_discipline: 0.75
+
+vehicle_mix:
+  suv: 0.35
+  sedan: 0.30
+  van: 0.12
+  truck: 0.10
+  hgv: 0.06
+  motorcycle: 0.05
+  bicycle: 0.02
+
+pedestrians:
+  density: 0.20
+  walking_speed: 1.4
+
+weather_presets:
+  sunny:
+    rain: 0.0
+    cloudiness: 5.0
+    wind: 5.0
+    wetness: 0.0
+    fog: 0.0
+    sun_altitude: 65.0
+    sun_azimuth: 0.0
+  rain:
+    rain: 45.0
+    cloudiness: 80.0
+    wind: 20.0
+    wetness: 40.0
+    fog: 5.0
+    sun_altitude: 30.0
+    sun_azimuth: 0.0
+  snow:
+    rain: 0.0
+    cloudiness: 90.0
+    wind: 30.0
+    wetness: 0.0
+    fog: 10.0
+    sun_altitude: 12.0
+    sun_azimuth: 0.0

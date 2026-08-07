@@ -1,0 +1,72 @@
+id: japan
+version: 1.0.0
+schema_version: 1
+author: DriveVerse
+updated: "2026-08-06"
+
+supports:
+  auto_rickshaw: false
+  tram: false
+  train: false
+  snow_accumulation: false
+  deformable_terrain: false
+
+rules:
+  drive_side: left
+  speed_limits:
+    highway: 100
+    urban: 60
+    residential: 30
+    school: 20
+  signal_duration_s: 40
+  behavior:
+    aggressiveness: 0.10    # Very cautious and polite driving culture
+    horn_frequency: 0.02    # Horn use is very rare in Japan
+    stopping_distance_m: 6.0
+    lane_discipline: 0.98   # Extremely disciplined lane usage
+
+vehicle_mix:
+  sedan: 0.45
+  suv: 0.20
+  motorcycle: 0.12
+  scooter: 0.10
+  van: 0.08
+  bicycle: 0.05
+
+pedestrians:
+  density: 0.55
+  walking_speed: 1.3
+
+weather_presets:
+  sunny:
+    rain: 0.0
+    cloudiness: 10.0
+    wind: 5.0
+    wetness: 0.0
+    fog: 0.0
+    sun_altitude: 55.0
+    sun_azimuth: 0.0
+  rain:
+    rain: 40.0
+    cloudiness: 75.0
+    wind: 15.0
+    wetness: 35.0
+    fog: 5.0
+    sun_altitude: 25.0
+    sun_azimuth: 0.0
+  typhoon:
+    rain: 100.0
+    cloudiness: 100.0
+    wind: 100.0
+    wetness: 100.0
+    fog: 20.0
+    sun_altitude: 5.0
+    sun_azimuth: 0.0
+  snow:
+    rain: 0.0
+    cloudiness: 85.0
+    wind: 25.0
+    wetness: 0.0
+    fog: 8.0
+    sun_altitude: 10.0
+    sun_azimuth: 0.0

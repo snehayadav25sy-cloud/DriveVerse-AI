@@ -1,0 +1,36 @@
+id: mumbai
+version: 1.0.0
+schema_version: 1
+extends: india              # Inherits India base; only override differences
+author: DriveVerse
+updated: "2026-08-06"
+
+# Mumbai-specific overrides
+
+rules:
+  behavior:
+    aggressiveness: 0.78    # Slightly more aggressive than India national average
+    horn_frequency: 0.90    # Even higher horn usage
+    stopping_distance_m: 1.5
+
+vehicle_mix:
+  motorcycle: 0.40
+  sedan: 0.26
+  auto_rickshaw: 0.18       # Higher rick density in Mumbai
+  truck: 0.08
+  bus: 0.06
+  bicycle: 0.02
+
+pedestrians:
+  density: 0.90             # Mumbai is extremely dense
+  walking_speed: 1.1
+
+weather_presets:
+  monsoon:
+    rain: 100.0             # Mumbai monsoon is far more intense than national average
+    cloudiness: 100.0
+    wind: 80.0
+    wetness: 100.0
+    fog: 30.0
+    sun_altitude: 10.0
+    sun_azimuth: 0.0

@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext'
 import Layout from './layouts/Layout'
 import Dashboard from './pages/Dashboard'
 import GenerateDataset from './pages/GenerateDataset'
+import GeneratePrompt from './pages/GeneratePrompt'
 import Jobs from './pages/Jobs'
 import Projects from './pages/Projects'
 import DatasetQuality from './pages/DatasetQuality'
@@ -39,6 +40,7 @@ export default function App() {
             <Route path="/"          element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/projects"  element={<ProtectedRoute><Projects /></ProtectedRoute>} />
             <Route path="/generate"  element={<ProtectedRoute><GenerateDataset /></ProtectedRoute>} />
+            <Route path="/generate-prompt" element={<ProtectedRoute><GeneratePrompt /></ProtectedRoute>} />
             <Route path="/jobs"      element={<ProtectedRoute><Jobs /></ProtectedRoute>} />
             <Route path="/quality"   element={<ProtectedRoute><DatasetQuality /></ProtectedRoute>} />
             <Route path="/countries" element={<ProtectedRoute><CountryProfiles /></ProtectedRoute>} />

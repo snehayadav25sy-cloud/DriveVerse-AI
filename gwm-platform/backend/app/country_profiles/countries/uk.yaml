@@ -1,0 +1,72 @@
+id: uk
+version: 1.0.0
+schema_version: 1
+author: DriveVerse
+updated: "2026-08-06"
+
+supports:
+  auto_rickshaw: false
+  tram: false
+  train: false
+  snow_accumulation: false
+  deformable_terrain: false
+
+rules:
+  drive_side: left
+  speed_limits:
+    highway: 112              # 70 mph motorway
+    urban: 48                 # 30 mph urban
+    residential: 32           # 20 mph residential (increasingly common)
+    school: 32
+  signal_duration_s: 30
+  behavior:
+    aggressiveness: 0.30      # Generally polite and patient
+    horn_frequency: 0.08
+    stopping_distance_m: 4.5
+    lane_discipline: 0.85     # Good lane discipline
+
+vehicle_mix:
+  sedan: 0.40
+  suv: 0.25
+  van: 0.15
+  motorcycle: 0.08
+  bicycle: 0.07
+  hgv: 0.05
+
+pedestrians:
+  density: 0.40
+  walking_speed: 1.4
+
+weather_presets:
+  overcast:
+    rain: 0.0
+    cloudiness: 85.0
+    wind: 12.0
+    wetness: 5.0
+    fog: 5.0
+    sun_altitude: 25.0
+    sun_azimuth: 0.0
+  rain:
+    rain: 35.0
+    cloudiness: 90.0
+    wind: 25.0
+    wetness: 40.0
+    fog: 10.0
+    sun_altitude: 15.0
+    sun_azimuth: 0.0
+  fog:
+    rain: 0.0
+    cloudiness: 75.0
+    wind: 5.0
+    wetness: 10.0
+    fog: 60.0
+    sun_altitude: 20.0
+    sun_azimuth: 0.0
+  snow:
+    rain: 0.0
+    cloudiness: 90.0
+    wind: 20.0
+    wetness: 0.0
+    fog: 5.0
+    sun_altitude: 8.0
+    sun_azimuth: 0.0

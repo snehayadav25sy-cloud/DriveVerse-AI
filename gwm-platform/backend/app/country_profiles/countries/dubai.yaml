@@ -1,0 +1,66 @@
+id: dubai
+version: 1.0.0
+schema_version: 1
+author: DriveVerse
+updated: "2026-08-06"
+
+supports:
+  auto_rickshaw: false
+  tram: false
+  train: false
+  snow_accumulation: false    # Dubai never has snow — constraint solver will reject snow scenarios
+  deformable_terrain: false
+
+rules:
+  drive_side: right
+  speed_limits:
+    highway: 140              # UAE highway limits are very high (up to 140 km/h)
+    urban: 80
+    residential: 40
+    school: 40
+  signal_duration_s: 40
+  behavior:
+    aggressiveness: 0.75      # Aggressive high-speed driving culture
+    horn_frequency: 0.30
+    stopping_distance_m: 2.5
+    lane_discipline: 0.55     # Lane discipline is moderate — frequent cutting
+
+vehicle_mix:
+  suv: 0.45                   # SUVs dominate UAE roads
+  sedan: 0.30
+  van: 0.10
+  truck: 0.08
+  motorcycle: 0.04
+  bicycle: 0.03
+
+pedestrians:
+  density: 0.15               # Low pedestrian traffic on roads (hot climate)
+  walking_speed: 1.2
+
+weather_presets:
+  sunny:
+    rain: 0.0
+    cloudiness: 2.0
+    wind: 8.0
+    wetness: 0.0
+    fog: 0.0
+    sun_altitude: 80.0
+    sun_azimuth: 0.0
+  dust_storm:
+    rain: 0.0
+    cloudiness: 50.0
+    wind: 90.0
+    wetness: 0.0
+    fog: 55.0              # Simulated dust via fog
+    sun_altitude: 25.0
+    sun_azimuth: 0.0
+  haze:
+    rain: 0.0
+    cloudiness: 20.0
+    wind: 10.0
+    wetness: 0.0
+    fog: 20.0
+    sun_altitude: 50.0
+    sun_azimuth: 0.0
+  # NOTE: Snow preset intentionally omitted. Constraint solver will resolve
+  # any 'snow' request in Dubai to 'dust_storm' as the closest valid alternative.

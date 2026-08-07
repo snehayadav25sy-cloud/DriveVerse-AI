@@ -98,7 +98,7 @@ const FORMAT_OPTIONS = [
 // ── Zod schema ───────────────────────────────────────────────────────────────
 const schema = z.object({
   project_id:    z.string().min(1, 'Select a project'),
-  map:           z.enum(['Town01', 'Town02', 'Town03']),
+  map:           z.enum(['Town01', 'Town02', 'Town03', 'Town04', 'Town05', 'Town06', 'Town07', 'Town10HD']),
   sensors:       z.array(z.string()).min(1, 'Select at least one sensor'),
   frames:        z.number().int().min(25).max(2000),
   export_format: z.enum(['kitti', 'coco', 'nuscenes']),

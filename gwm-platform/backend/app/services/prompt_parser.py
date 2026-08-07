@@ -19,17 +19,24 @@ from app.schemas.scenario import ScenarioConfig, VehicleMix
 # ── Vocabulary tables ─────────────────────────────────────────────────────────
 
 # Map aliases  →  canonical CARLA map
-_MAP_ALIASES: dict[str, str] = {
-    # Town01 — urban / city / intersection
+# Explicit Town keywords — these ALWAYS win over inferred aliases.
+# Confidence: 1.0 when one of these is matched.
+_MAP_EXPLICIT: dict[str, str] = {
     "town01": "Town01", "town 01": "Town01", "town1": "Town01", "town 1": "Town01",
+    "town02": "Town02", "town 02": "Town02", "town2": "Town02", "town 2": "Town02",
+    "town03": "Town03", "town 03": "Town03", "town3": "Town03", "town 3": "Town03",
+}
+
+# Road-type / city inference aliases — used ONLY when no explicit Town name is present.
+# Confidence: 0.6 when one of these is matched.
+_MAP_INFERRED: dict[str, str] = {
+    # Town01 — urban / city / intersection
     "city": "Town01", "urban": "Town01", "downtown": "Town01", "intersection": "Town01",
     "junction": "Town01",
     # Town02 — suburban / residential
-    "town02": "Town02", "town 02": "Town02", "town2": "Town02", "town 2": "Town02",
     "suburb": "Town02", "suburban": "Town02", "residential": "Town02",
     "neighbourhood": "Town02", "neighborhood": "Town02",
     # Town03 — highway / motorway / rural
-    "town03": "Town03", "town 03": "Town03", "town3": "Town03", "town 3": "Town03",
     "highway": "Town03", "motorway": "Town03", "freeway": "Town03",
     "rural": "Town03", "countryside": "Town03", "open road": "Town03",
     "autobahn": "Town03",
@@ -204,15 +211,23 @@ def parse_prompt(prompt: str) -> ScenarioConfig:
         conf["road_type"] = 1.0
         expl.append(f"Road type → {road_type}")
 
-    # ── Map (from explicit Town keyword or road/city hint) ────────────────────
-    carla_map = _match_longest(text, _MAP_ALIASES)
+    # ── Map resolution (priority: explicit > road-inferred > city-hint) ─────────
+    # Explicit Town name in prompt always wins — confidence 1.0.
+    carla_map = _match_longest(text, _MAP_EXPLICIT)
     if carla_map:
         conf["carla_map"] = 1.0
-        expl.append(f"CARLA map → {carla_map} (direct keyword)")
-    elif carla_map_hint:
-        carla_map = carla_map_hint
-        conf["carla_map"] = 0.7
-        expl.append(f"CARLA map → {carla_map} (inferred from city/road type)")
+        expl.append(f"CARLA map → {carla_map} (explicit Town name in prompt)")
+    else:
+        # Road-type / city inference — confidence 0.6.
+        carla_map = _match_longest(text, _MAP_INFERRED)
+        if carla_map:
+            conf["carla_map"] = 0.6
+            expl.append(f"CARLA map → {carla_map} (inferred from road-type keyword)")
+        elif carla_map_hint:
+            # City-name hint from _CITY_MAP_HINTS — confidence 0.5.
+            carla_map = carla_map_hint
+            conf["carla_map"] = 0.5
+            expl.append(f"CARLA map → {carla_map} (inferred from city name)")
 
     # ── Environment ───────────────────────────────────────────────────────────
     weather    = _match_longest(text, _WEATHER_ALIASES)
@@ -252,6 +267,10 @@ def parse_prompt(prompt: str) -> ScenarioConfig:
         if re.search(r"\b" + re.escape(alias) + r"\b", text):
             detected_sensors.add(canonical)
 
+    # RGB is always the baseline — additional sensors are additive.
+    # "with LiDAR" → ['lidar', 'rgb'], not ['lidar'] alone.
+    if detected_sensors:
+        detected_sensors.add("rgb")
     sensors = sorted(detected_sensors) if detected_sensors else ["rgb"]
     conf["sensors"] = 1.0 if detected_sensors else 0.0
     if not detected_sensors:
@@ -296,15 +315,27 @@ def parse_prompt(prompt: str) -> ScenarioConfig:
 
     # ── Unrecognised tokens ───────────────────────────────────────────────────
     unrecognised = _find_unrecognised(text, [
-        _MAP_ALIASES, _SENSOR_ALIASES, _FORMAT_ALIASES,
+        _MAP_EXPLICIT, _MAP_INFERRED, _SENSOR_ALIASES, _FORMAT_ALIASES,
         _WEATHER_ALIASES, _TOD_ALIASES, _TRAFFIC_ALIASES,
         _ROAD_ALIASES, _COUNTRY_ALIASES,
     ] + [dict.fromkeys(_SENSOR_BUNDLES)] + [dict.fromkeys(_FRAME_WORD_HINTS)])
+
+    # ── Modifiers ─────────────────────────────────────────────────────────────
+    modifiers = []
+    if "rush hour" in text or "rush_hour" in text:
+        modifiers.append("rush_hour")
+    if "night" in text:
+        modifiers.append("night")
+    if "construction" in text:
+        modifiers.append("construction")
+    if "school" in text:
+        modifiers.append("school")
 
     return ScenarioConfig(
         country=country,
         city=city,
         road_type=road_type,
+        modifiers=modifiers,
         weather=weather,
         time_of_day=time_of_day,
         traffic_density=traffic_density,

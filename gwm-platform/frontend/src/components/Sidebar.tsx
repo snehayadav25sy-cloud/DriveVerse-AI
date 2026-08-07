@@ -1,17 +1,18 @@
 import { NavLink } from 'react-router-dom'
 import {
   LayoutDashboard, Clapperboard, Briefcase,
-  Cpu, ChevronRight, LogOut, Folder, BarChart3, Globe
+  Cpu, ChevronRight, LogOut, Folder, BarChart3, Globe, Sparkles
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 
 const NAV = [
-  { to: '/',         icon: LayoutDashboard, label: 'Dashboard' },
-  { to: '/projects', icon: Folder,          label: 'Projects' },
-  { to: '/generate', icon: Clapperboard,    label: 'Generate Dataset' },
-  { to: '/jobs',     icon: Briefcase,       label: 'Simulations' },
-  { to: '/quality',  icon: BarChart3,       label: 'Dataset Quality' },
-  { to: '/countries',icon: Globe,           label: 'Country Profiles' },
+  { to: '/',              icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/projects',      icon: Folder,          label: 'Projects' },
+  { to: '/generate',      icon: Clapperboard,    label: 'Generate Dataset' },
+  { to: '/generate-prompt', icon: Sparkles,      label: 'AI Prompt Engine' },
+  { to: '/jobs',          icon: Briefcase,       label: 'Simulations' },
+  { to: '/quality',       icon: BarChart3,       label: 'Dataset Quality' },
+  { to: '/countries',     icon: Globe,           label: 'Country Profiles' },
 ]
 
 export default function Sidebar() {

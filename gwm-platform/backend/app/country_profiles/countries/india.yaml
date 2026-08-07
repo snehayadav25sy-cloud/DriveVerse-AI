@@ -1,0 +1,65 @@
+id: india
+version: 1.0.0
+schema_version: 1
+author: DriveVerse
+updated: "2026-08-06"
+
+supports:
+  auto_rickshaw: false        # No CARLA asset — microlino fallback used
+  tram: false
+  train: false
+  snow_accumulation: false    # India does not experience snow in most regions
+  deformable_terrain: false
+
+rules:
+  drive_side: left            # India drives on the left
+  speed_limits:
+    highway: 80
+    urban: 50
+    residential: 30
+    school: 20
+  signal_duration_s: 45
+  behavior:
+    aggressiveness: 0.72      # Very aggressive driving culture
+    horn_frequency: 0.85      # Very high horn usage
+    stopping_distance_m: 1.8  # Close following distances
+    lane_discipline: 0.35     # Low lane discipline (frequent weaving)
+
+vehicle_mix:
+  # Semantic class names only — Blueprint Resolver maps these to actual blueprints
+  motorcycle: 0.38
+  sedan: 0.28
+  auto_rickshaw: 0.12         # Fallback: vehicle.micro.microlino
+  truck: 0.10
+  bus: 0.08
+  bicycle: 0.04
+
+pedestrians:
+  density: 0.75               # Very high pedestrian presence
+  walking_speed: 1.0          # Slower average walking speed
+
+weather_presets:
+  monsoon:
+    rain: 95.0
+    cloudiness: 100.0
+    wind: 65.0
+    wetness: 100.0
+    fog: 25.0
+    sun_altitude: 15.0
+    sun_azimuth: 0.0
+  hot_dry:
+    rain: 0.0
+    cloudiness: 10.0
+    wind: 15.0
+    wetness: 0.0
+    fog: 0.0
+    sun_altitude: 75.0
+    sun_azimuth: 0.0
+  dust_haze:
+    rain: 0.0
+    cloudiness: 30.0
+    wind: 30.0
+    wetness: 0.0
+    fog: 35.0
+    sun_altitude: 40.0
+    sun_azimuth: 0.0

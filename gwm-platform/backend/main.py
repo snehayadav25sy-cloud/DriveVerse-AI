@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.database.database import engine, Base
 from app.api import auth, projects, jobs, datasets, analytics
 from app.api import prompt  # Build 3: AI Prompt Engine
+from app.api import countries  # Build 4: Country Profile Engine
 
 Base.metadata.create_all(bind=engine)
 
@@ -22,7 +23,8 @@ app.include_router(projects.router)
 app.include_router(jobs.router)
 app.include_router(datasets.router)
 app.include_router(analytics.router)
-app.include_router(prompt.router)   # Build 3: POST /prompt/parse, /prompt/parse-and-submit
+app.include_router(prompt.router)   # Build 3: POST /prompt/parse, /prompt/generate
+app.include_router(countries.router) # Build 4: GET|POST|PUT|DELETE /countries, POST /countries/scenario/expand
 
 @app.get("/")
 def read_root():

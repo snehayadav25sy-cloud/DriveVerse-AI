@@ -6,7 +6,7 @@
  *   2. Calls POST /prompt/parse for a live preview (debounced)
  *   3. Shows per-field confidence chips for map / sensors / frames / format
  *   4. Has an "Apply to Form" callback so GenerateForm can be pre-filled
- *   5. Has a "Submit Now" button that calls /prompt/parse-and-submit
+ *   5. Has a "Submit Now" button that calls /prompt/generate
  *
  * Styled to match the existing dark-glass design system.
  */

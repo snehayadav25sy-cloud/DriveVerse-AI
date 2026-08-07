@@ -2,7 +2,7 @@ from pydantic import BaseModel, validator
 from typing import Optional, List
 from datetime import datetime
 
-VALID_MAPS    = {"Town01", "Town02", "Town03"}
+VALID_MAPS    = {"Town01", "Town02", "Town03", "Town04", "Town05", "Town06", "Town07", "Town10HD"}
 VALID_SENSORS = {
     "rgb", "lidar", "radar", "depth", "semantic", "instance", "optical_flow",
     "camera_front", "camera_left", "camera_right", "camera_rear"
