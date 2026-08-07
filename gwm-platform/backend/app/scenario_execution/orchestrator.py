@@ -81,7 +81,7 @@ class ScenarioOrchestrator:
                 actor_id=v.vehicle_id,
                 semantic_class=v.semantic_type,
                 blueprint_id=v.blueprint_id,
-                position=v.position,
+                position=self._to_execution_coordinate(v.position),
                 rotation_deg=v.rotation_deg,
                 speed_ms=v.speed_ms,
                 is_ego=v.is_ego,
@@ -92,10 +92,10 @@ class ScenarioOrchestrator:
             actors.append(PedestrianActorState(
                 actor_id=p.pedestrian_id,
                 semantic_class="pedestrian",
-                position=p.position,
+                position=self._to_execution_coordinate(p.position),
                 rotation_deg=p.rotation_deg,
                 walking_speed_ms=p.walking_speed_ms,
-                destination=p.destination,
+                destination=self._to_execution_coordinate(p.destination) if p.destination else None,
                 crossing_probability=p.crossing_probability,
                 spawn_zone=p.spawn_zone,
             ))
@@ -107,7 +107,7 @@ class ScenarioOrchestrator:
             sensors.append(SensorState(
                 sensor_id=s.sensor_id,
                 sensor_type=s.sensor_type,
-                position=s.position,
+                position=self._to_execution_coordinate(s.position),
                 rotation=s.rotation,
                 resolution=s.resolution,
                 fov=s.fov,
@@ -118,6 +118,12 @@ class ScenarioOrchestrator:
                 },
             ))
         return sensors
+
+    def _to_execution_coordinate(self, coord: Any) -> Any:
+        if hasattr(coord, "x") and hasattr(coord, "y") and hasattr(coord, "z"):
+            from app.scenario_execution.models import ExecutionCoordinate
+            return ExecutionCoordinate(x=coord.x, y=coord.y, z=coord.z)
+        return coord
 
     def _plan_events(self, world_plan: Any, session: ExecutionSession) -> list:
         events = []

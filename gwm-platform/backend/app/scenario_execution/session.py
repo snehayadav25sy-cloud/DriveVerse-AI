@@ -10,6 +10,7 @@ from typing import Any, Dict, Optional
 from app.scenario_execution.models import (
     ExecutionSession,
     MapConfig,
+    SessionStatus,
     TimingConfig,
 )
 from app.scenario_execution.state_machine import ExecutionStateMachine
@@ -41,7 +42,7 @@ def create_execution_session(
         session_id=session_id,
         scenario_id=scenario_id,
         world_plan_id=world_plan_id,
-        status=ExecutionSession.CREATED,
+        status=SessionStatus.CREATED,
         seeds=default_seeds,
         timing=timing or TimingConfig(),
         map=map_config or MapConfig(),

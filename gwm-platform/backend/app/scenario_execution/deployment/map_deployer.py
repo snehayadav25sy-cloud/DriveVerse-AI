@@ -10,7 +10,9 @@ import os
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
-from app.scenario_execution.models import MapConfig, MapDeploymentStatus
+from pydantic import BaseModel, Field
+
+from app.scenario_execution.models import MapConfig, MapDeploymentStatus, MapProviderType
 
 
 class MapDeploymentResult(BaseModel):
