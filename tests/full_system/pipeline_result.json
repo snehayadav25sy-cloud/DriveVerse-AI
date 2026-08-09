@@ -1,0 +1,272 @@
+{
+  "build3_prompt": {
+    "status_code": 200,
+    "data": {
+      "schema_version": "3.1",
+      "country": "India",
+      "city": null,
+      "road_type": null,
+      "modifiers": [],
+      "weather": "Rain",
+      "time_of_day": "Night",
+      "lighting": "Artificial",
+      "traffic_density": "Heavy",
+      "vehicles": {
+        "car": 150,
+        "truck": 30,
+        "bus": 0,
+        "motorcycle": 20,
+        "bicycle": 0,
+        "van": 0
+      },
+      "pedestrians": 0,
+      "sensors": [
+        "lidar",
+        "rgb"
+      ],
+      "frames": 20,
+      "export_format": "kitti",
+      "carla_map": "Town01",
+      "optimizer_applied": true,
+      "validation_passed": true,
+      "confidence": {
+        "country": 1.0,
+        "weather": 1.0,
+        "time_of_day": 1.0,
+        "traffic_density": 1.0,
+        "sensors": 1.0,
+        "frames": 1.0,
+        "export_format": 1.0
+      },
+      "explanation": [
+        "Country \u2192 India",
+        "Weather \u2192 Rain",
+        "Time of day \u2192 Night",
+        "Traffic \u2192 Heavy",
+        "Sensors \u2192 ['lidar', 'rgb']",
+        "Frames \u2192 20",
+        "Format \u2192 kitti"
+      ],
+      "unrecognised_tokens": [
+        "monsoon",
+        "bengaluru",
+        "around",
+        "driving",
+        "road",
+        "export",
+        "sensors"
+      ],
+      "source_prompt": "Generate a rainy monsoon evening driving scenario in Bengaluru, India around MG Road, with heavy traffic, motorcycles, cars, buses, pedestrians, RGB and LiDAR sensors, 20 frames, KITTI export.",
+      "llm_provider": "regex",
+      "validation": {
+        "passed": true,
+        "errors": [],
+        "warnings": [
+          {
+            "level": "warning",
+            "field": "traffic_density",
+            "message": "Traffic density set but no vehicles configured",
+            "value": "Heavy",
+            "limit": null
+          }
+        ],
+        "infos": []
+      },
+      "optimizer_changes": [
+        {
+          "field": "lighting",
+          "from_value": null,
+          "to_value": "Artificial",
+          "reason": "Night simulation requires artificial lighting"
+        },
+        {
+          "field": "vehicles.car",
+          "from_value": 0,
+          "to_value": 150,
+          "reason": "Heavy traffic: seeding 150 cars"
+        },
+        {
+          "field": "vehicles.truck",
+          "from_value": 0,
+          "to_value": 30,
+          "reason": "Heavy traffic: seeding 30 trucks"
+        },
+        {
+          "field": "vehicles.motorcycle",
+          "from_value": 0,
+          "to_value": 20,
+          "reason": "Heavy traffic: seeding 20 motorcycles"
+        }
+      ],
+      "translation": {
+        "carla_map": "Town01",
+        "confidence": 0.3,
+        "source": "default",
+        "note": "No city or road_type matched; defaulting to Town01"
+      },
+      "estimate": {
+        "estimated_duration_seconds": 4.0,
+        "estimated_disk_mb": 6.31,
+        "estimated_gpu_vram_mb": 2012.0,
+        "estimated_frames_actual": 20,
+        "cost_breakdown": {
+          "lidar": "3.9 MB",
+          "rgb": "2.3 MB",
+          "labels": "0.0 MB",
+          "metadata": "0.0 MB"
+        },
+        "performance_warnings": []
+      }
+    }
+  },
+  "build4_country": {
+    "status_code": 200,
+    "data": {
+      "id": "india",
+      "version": "1.0.0",
+      "schema_version": 1,
+      "extends": null,
+      "author": "DriveVerse",
+      "updated": "2026-08-06",
+      "supports": {
+        "auto_rickshaw": false,
+        "tram": false,
+        "train": false,
+        "snow_accumulation": false,
+        "deformable_terrain": false
+      },
+      "rules": {
+        "drive_side": "left",
+        "speed_limits": {
+          "highway": 80,
+          "urban": 50,
+          "residential": 30,
+          "school": 20
+        },
+        "signal_duration_s": 45,
+        "behavior": {
+          "aggressiveness": 0.72,
+          "horn_frequency": 0.85,
+          "stopping_distance_m": 1.8,
+          "lane_discipline": 0.35
+        }
+      },
+      "weather_presets": {
+        "monsoon": {
+          "rain": 95.0,
+          "cloudiness": 100.0,
+          "wind": 65.0,
+          "wetness": 100.0,
+          "fog": 25.0,
+          "sun_altitude": 15.0,
+          "sun_azimuth": 0.0
+        },
+        "hot_dry": {
+          "rain": 0.0,
+          "cloudiness": 10.0,
+          "wind": 15.0,
+          "wetness": 0.0,
+          "fog": 0.0,
+          "sun_altitude": 75.0,
+          "sun_azimuth": 0.0
+        },
+        "dust_haze": {
+          "rain": 0.0,
+          "cloudiness": 30.0,
+          "wind": 30.0,
+          "wetness": 0.0,
+          "fog": 35.0,
+          "sun_altitude": 40.0,
+          "sun_azimuth": 0.0
+        }
+      },
+      "vehicle_mix": {
+        "motorcycle": 0.38,
+        "sedan": 0.28,
+        "auto_rickshaw": 0.12,
+        "truck": 0.1,
+        "bus": 0.08,
+        "bicycle": 0.04
+      },
+      "pedestrians": {
+        "density": 0.75,
+        "walking_speed": 1.0
+      }
+    }
+  },
+  "build5_geography": {
+    "status_code": 200,
+    "data": {
+      "status": "resolved",
+      "query": "MG Road, Bengaluru, India",
+      "resolution": {
+        "query": "MG Road, Bengaluru, India",
+        "provider": "nominatim",
+        "latitude": 12.9755264,
+        "longitude": 77.6067902,
+        "display_name": "Mahatma Gandhi Road, Shanthala Nagar, Ashokanagar, Bengaluru Central City Corporation, Bengaluru, Bangalore North, Bengaluru Urban, Karnataka, 560001, India",
+        "country": "India",
+        "country_code": "in",
+        "state": "Karnataka",
+        "city": "Bengaluru",
+        "bounding_box": {
+          "south": 12.9705264,
+          "north": 12.9805264,
+          "west": 77.6017902,
+          "east": 77.6117902
+        },
+        "raw": {
+          "place_id": 252171452,
+          "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+          "osm_type": "node",
+          "osm_id": 6400857554,
+          "lat": "12.9755264",
+          "lon": "77.6067902",
+          "class": "railway",
+          "type": "station",
+          "place_rank": 30,
+          "importance": 0.2772938966131108,
+          "addresstype": "railway",
+          "name": "Mahatma Gandhi Road",
+          "display_name": "Mahatma Gandhi Road, Shanthala Nagar, Ashokanagar, Bengaluru Central City Corporation, Bengaluru, Bangalore North, Bengaluru Urban, Karnataka, 560001, India",
+          "address": {
+            "railway": "Mahatma Gandhi Road",
+            "road": "Mahatma Gandhi Road",
+            "quarter": "Shanthala Nagar",
+            "suburb": "Ashokanagar",
+            "city_district": "Bengaluru Central City Corporation",
+            "city": "Bengaluru",
+            "county": "Bangalore North",
+            "state_district": "Bengaluru Urban",
+            "state": "Karnataka",
+            "ISO3166-2-lvl4": "IN-KA",
+            "postcode": "560001",
+            "country": "India",
+            "country_code": "in"
+          },
+          "boundingbox": [
+            "12.9705264",
+            "12.9805264",
+            "77.6017902",
+            "77.6117902"
+          ]
+        },
+        "cached": false,
+        "timestamp": "2026-08-09T16:39:15Z"
+      },
+      "error": null
+    }
+  },
+  "build6_world": {
+    "status_code": 500,
+    "data": {
+      "detail": "'world'"
+    }
+  },
+  "build7_execution": {
+    "status_code": 500,
+    "data": {
+      "detail": "1 validation error for WorldPlan\ncarla_coordinate_origin\n  Input should be a valid dictionary or instance of WorldCoordinate [type=model_type, input_value=<app.api.execution.C object at 0x000001BACBB98110>, input_type=C]\n    For further information visit https://errors.pydantic.dev/2.13/v/model_type"
+    }
+  }
+}

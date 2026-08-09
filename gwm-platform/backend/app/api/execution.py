@@ -49,7 +49,7 @@ async def start_execution(request: ExecutionStartRequest):
             location_query="test",
             country="usa",
             map_name="Town01",
-            carla_coordinate_origin=type('C', (), {'x': 0, 'y': 0, 'z': 0})(),
+            carla_coordinate_origin={"x": 0, "y": 0, "z": 0},
         )
 
         resolved_scenario = {"country": "usa", "weather": "sunny"}
