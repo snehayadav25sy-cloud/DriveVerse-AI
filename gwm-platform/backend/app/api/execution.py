@@ -13,7 +13,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 from app.scenario_execution.orchestrator import ScenarioOrchestrator
-from app.scenario_execution.models import ExecutionSession, MapConfig, SessionStatus, TimingConfig
+from app.scenario_execution.models import ExecutionSession, TimingConfig, MapConfig, SessionStatus
 from app.scenario_execution.state_machine import ExecutionStateMachine, InvalidStateTransition
 from app.scenario_execution.preflight import PreflightValidator
 from app.scenario_execution.provenance.execution_provenance import compute_execution_provenance

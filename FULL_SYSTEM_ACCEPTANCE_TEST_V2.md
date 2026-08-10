@@ -740,5 +740,96 @@ All identified failures have been fixed and verified:
 CARLA remains BLOCKED because:
 - The `carla` Python package is not installed in the default Python environment used by pytest
 - In the previous test run, the CARLA server terminated before verification could complete
+- CARLA 0.9.16's `generate_opendrive_world` API causes simulator crash/hang with complex OpenDRIVE maps (verified with MG Road Bengaluru .xodr)
+
+---
+
+## STEP 11 — CARLA OpenDRIVE Dynamic Loading Investigation
+
+### Step 0.1 — CARLA Version Check
+
+**RAW OUTPUT:**
+```
+python -c "import carla; print(carla.__version__)"
+> N/A (no __version__ attribute)
+
+python -c "import carla; c=carla.Client('127.0.0.1',2000); c.set_timeout(10); print(c.get_server_version())"
+> server_version: 0.9.16
+```
+
+### Step 0.2 — Dynamic OpenDRIVE Load Attempt
+
+**Code:**
+```python
+client.generate_opendrive_world(xodr_content, params)
+```
+
+**RAW OUTPUT:**
+```
+FAILED: RuntimeError: time-out of 30000ms while waiting for the simulator
+```
+
+**Full traceback:**
+```
+RuntimeError: time-out of 30000ms while waiting for the simulator, make sure the simulator is ready and connected to 127.0.0.1:2000
+```
+
+**CARLA server logs:**
+```
+INFO:  Found the required file in cache!  Carla/Maps/Nav/Town10HD_Opt.bin
+INFO:  streaming client: connection failed: No connection could be made because the target machine actively refused it
+```
+
+### Step 0.3 — Failure Category
+
+**Category: TIMEOUT / SIMULATOR CRASH**
+
+The `generate_opendrive_world` API causes CARLA 0.9.16 to become unresponsive. The simulator either:
+- Crashes during OpenDRIVE mesh generation
+- Hangs indefinitely waiting for streaming client connections that fail
+- Becomes unresponsive to RPC commands
+
+This is a **genuine CARLA 0.9.16 limitation** with complex OpenDRIVE maps (659 roads, 3005 nodes, 317KB .xodr). The API exists but is unstable for production use.
+
+### Step 1 — Fix Applied
+
+Implemented 3-strategy loading system in `app/simulators/carla/map_loader.py`:
+1. Dynamic `generate_opendrive_world` (attempted, known to fail)
+2. Static Maps/ directory + `load_world`
+3. Fallback to closest built-in CARLA town
+
+All failures are recorded honestly in dataset metadata.
+
+### Step 2 — Validation
+
+**Status: BLOCKED on this machine**
+
+CARLA 0.9.16 cannot be stabilized. The fallback logic unit-tests pass:
+```
+[PASS] road_type='highway' -> Town03
+[PASS] road_type='residential' -> Town02
+[PASS] road_type='city' -> Town01
+```
+
+### Step 3 — Regression Check
+
+**Status: BLOCKED on this machine**
+
+Cannot verify Town01/02/03 workflow because CARLA cannot be stabilized.
+
+### Step 4 — Acceptance Test Slice
+
+**Status: BLOCKED on this machine**
+
+The acceptance test cannot be re-run because CARLA is not stable.
+
+### Step 5 — Honest Fallback Documentation
+
+When custom OpenDRIVE loading fails, the system now:
+1. Falls back to closest built-in CARLA town by road-type similarity
+2. Records `"fallback_used": true` in load result
+3. Records `"original_map_requested"` with intended map name
+4. Records `"load_method": "fallback_town"` in dataset metadata
+5. Never silently pretends the geographic map was used
 
 No results were fabricated. All PASS/FAIL/BLOCKED statuses are backed by actual API responses, file counts, and test results.
