@@ -6,7 +6,6 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 
 import json
 import requests
-import pytest
 
 API_BASE = "http://localhost:8000"
 

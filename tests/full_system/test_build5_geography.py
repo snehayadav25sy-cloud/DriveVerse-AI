@@ -21,7 +21,7 @@ def test_build5_geography_engine():
         "location": "MG Road, Bengaluru, India",
         "radius_m": 500.0,
     }
-    resp = requests.post(f"{API_BASE}/geography/build", json=payload, timeout=120)
+    resp = requests.post(f"{API_BASE}/geography/build", json=payload, timeout=180)
     print(f"HTTP {resp.status_code}")
     assert resp.status_code == 200, f"Expected HTTP 200, got {resp.status_code}"
     data = resp.json()

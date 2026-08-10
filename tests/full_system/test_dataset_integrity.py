@@ -6,7 +6,6 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 
 import tempfile
 import os
-import pytest
 
 
 def test_dataset_integrity():

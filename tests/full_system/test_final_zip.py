@@ -7,7 +7,6 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 import tempfile
 import zipfile
 import json
-import pytest
 
 
 def test_final_zip_structure():
