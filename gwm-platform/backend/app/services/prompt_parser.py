@@ -99,7 +99,7 @@ _TOD_ALIASES: dict[str, str] = {
     "day": "Day", "daytime": "Day", "noon": "Day", "morning": "Day",
     "afternoon": "Day", "bright": "Day", "daylight": "Day",
     "night": "Night", "nighttime": "Night", "dark": "Night", "midnight": "Night",
-    "evening": "Night", "late night": "Night",
+    "evening": "Evening", "late night": "Night",
     "dusk": "Dusk", "sunset": "Dusk", "twilight": "Dusk",
     "dawn": "Dawn", "sunrise": "Dawn", "early morning": "Dawn",
 }
@@ -139,7 +139,7 @@ _COUNTRY_ALIASES: dict[str, str] = {
     "france": "France", "paris": "France",
     "thailand": "Thailand", "bangkok": "Thailand", "thai": "Thailand",
     "bahrain": "Bahrain",
-    "india": "India", "mumbai": "India", "delhi": "India",
+    "india": "India", "mumbai": "India", "delhi": "India", "bengaluru": "India", "bangalore": "India",
     "china": "China", "shanghai": "China", "beijing": "China",
     "australia": "Australia", "sydney": "Australia", "melbourne": "Australia",
 }
@@ -180,6 +180,18 @@ _VEHICLE_PATTERNS: dict[str, re.Pattern[str]] = {
 }
 _PEDESTRIAN_PATTERN = re.compile(r"(\d+)\s+pedestrians?", re.I)
 
+_NAMED_ROAD_PATTERN = re.compile(
+    r"\b([a-z][a-z0-9\s]{1,30}?)\s+(road|street|avenue|highway|boulevard|lane|drive|way|circle|court|plaza)\b",
+    re.I,
+)
+
+_NAMED_ROAD_STOP_WORDS = {
+    "the", "a", "an", "on", "in", "at", "around", "along",
+    "main", "high", "north", "south", "east", "west", "old", "new",
+    "generate", "scenario", "driving", "rainy", "monsoon", "heavy",
+    "light", "medium", "with", "and", "or", "for",
+}
+
 
 # ── Core parser ───────────────────────────────────────────────────────────────
 
@@ -200,6 +212,8 @@ def parse_prompt(prompt: str) -> ScenarioConfig:
     city     = _extract_city(text)
     road_type = _match_longest(text, _ROAD_ALIASES)
     carla_map_hint = _extract_carla_hint(text, city)
+    named_road = _extract_named_road(prompt)
+    location_query = _build_location_query(prompt, city, country, named_road)
 
     if country:
         conf["country"] = 1.0
@@ -207,6 +221,9 @@ def parse_prompt(prompt: str) -> ScenarioConfig:
     if city:
         conf["city"] = 1.0
         expl.append(f"City → {city}")
+    if named_road:
+        conf["named_road"] = 1.0
+        expl.append(f"Named road → {named_road}")
     if road_type:
         conf["road_type"] = 1.0
         expl.append(f"Road type → {road_type}")
@@ -334,6 +351,8 @@ def parse_prompt(prompt: str) -> ScenarioConfig:
     return ScenarioConfig(
         country=country,
         city=city,
+        location_query=location_query,
+        named_road=named_road,
         road_type=road_type,
         modifiers=modifiers,
         weather=weather,
@@ -364,11 +383,53 @@ def _match_longest(text: str, aliases: dict[str, str]) -> str | None:
 def _extract_city(text: str) -> str | None:
     """Extract city name as a display string (Title Case)."""
     for alias, country in sorted(_COUNTRY_ALIASES.items(), key=lambda kv: -len(kv[0])):
-        # If the alias looks like a city (not generic word) return it
         if len(alias) > 4 and alias not in {"japan", "france", "germany", "china",
                                               "india", "australia", "bahrain", "thailand"}:
             if re.search(r"\b" + re.escape(alias) + r"\b", text):
                 return alias.title()
+    return None
+
+
+def _extract_named_road(prompt: str) -> str | None:
+    """Extract named road/location from prompt (e.g., 'MG Road', 'Main Street')."""
+    text = prompt.strip()
+    lower_text = text.lower()
+    road_suffixes = ("road", "street", "avenue", "highway", "boulevard", "lane", "drive", "way", "circle", "court", "plaza")
+    candidates = []
+    for suffix in road_suffixes:
+        start = 0
+        while True:
+            idx = lower_text.find(suffix, start, len(lower_text))
+            if idx == -1:
+                break
+            prefix = text[:idx].rstrip()
+            words = prefix.split()
+            for name_len in range(1, min(len(words), 4) + 1):
+                name_words = words[-name_len:]
+                name = " ".join(name_words)
+                if any(w.lower() in _NAMED_ROAD_STOP_WORDS for w in name_words):
+                    continue
+                if len(name) >= 2 and not any(w.lower() in road_suffixes for w in name_words):
+                    candidates.append((len(name), f"{name} {suffix.title()}"))
+                    break
+            start = idx + len(suffix)
+    if not candidates:
+        return None
+    candidates.sort(key=lambda x: x[0])
+    return candidates[0][1]
+
+
+def _build_location_query(prompt: str, city: str | None, country: str | None, named_road: str | None) -> str | None:
+    """Build a location query string from extracted components."""
+    parts = []
+    if named_road:
+        parts.append(named_road)
+    if city:
+        parts.append(city)
+    if country:
+        parts.append(country)
+    if parts:
+        return ", ".join(parts)
     return None
 
 

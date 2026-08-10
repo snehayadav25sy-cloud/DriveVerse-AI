@@ -7,12 +7,14 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 import tempfile
 import zipfile
 import json
+import pytest
 
-print("=" * 65)
-print("  STEP 9 — Final ZIP Structure")
-print("=" * 65)
 
-try:
+def test_final_zip_structure():
+    print("=" * 65)
+    print("  STEP 9 — Final ZIP Structure")
+    print("=" * 65)
+
     with tempfile.TemporaryDirectory() as tmpdir:
         zip_path = os.path.join(tmpdir, "dataset.zip")
         with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
@@ -42,46 +44,23 @@ try:
             for file in files:
                 print(f"{subindent}{file}")
         
-        checks = []
-        checks.append(("image_2 exists", os.path.exists(os.path.join(extract_dir, "image_2"))))
-        checks.append(("velodyne exists", os.path.exists(os.path.join(extract_dir, "velodyne"))))
-        checks.append(("label_2 exists", os.path.exists(os.path.join(extract_dir, "label_2"))))
-        checks.append(("metadata exists", os.path.exists(os.path.join(extract_dir, "metadata"))))
-        checks.append(("validation exists", os.path.exists(os.path.join(extract_dir, "validation"))))
-        checks.append(("scenario.json exists", os.path.exists(os.path.join(extract_dir, "metadata", "scenario.json"))))
-        checks.append(("provenance.json exists", os.path.exists(os.path.join(extract_dir, "metadata", "provenance.json"))))
-        checks.append(("validation.json exists", os.path.exists(os.path.join(extract_dir, "validation", "validation.json"))))
+        assert os.path.exists(os.path.join(extract_dir, "image_2"))
+        assert os.path.exists(os.path.join(extract_dir, "velodyne"))
+        assert os.path.exists(os.path.join(extract_dir, "label_2"))
+        assert os.path.exists(os.path.join(extract_dir, "metadata"))
+        assert os.path.exists(os.path.join(extract_dir, "validation"))
+        assert os.path.exists(os.path.join(extract_dir, "metadata", "scenario.json"))
+        assert os.path.exists(os.path.join(extract_dir, "metadata", "provenance.json"))
+        assert os.path.exists(os.path.join(extract_dir, "validation", "validation.json"))
         
         with open(os.path.join(extract_dir, "metadata", "provenance.json")) as f:
             prov = json.load(f)
-        checks.append(("provenance has session_id", "session_id" in prov))
+        assert "session_id" in prov
         
         with open(os.path.join(extract_dir, "validation", "validation.json")) as f:
             val = json.load(f)
-        checks.append(("validation has passed", "passed" in val))
+        assert "passed" in val
         
         print("\n" + "=" * 65)
-        print("  VERIFICATION")
+        print("  ZIP STRUCTURE RESULT: PASS")
         print("=" * 65)
-        all_pass = True
-        for label, passed in checks:
-            status = "PASS" if passed else "FAIL"
-            if not passed:
-                all_pass = False
-            print(f"  [{status}]  {label}")
-        
-        print("\n" + "=" * 65)
-        if all_pass:
-            print("  ZIP STRUCTURE RESULT: PASS")
-        else:
-            print("  ZIP STRUCTURE RESULT: FAIL")
-        print("=" * 65)
-        
-        sys.exit(0 if all_pass else 1)
-        
-except Exception as e:
-    print(f"ERROR: {e}")
-    print("\n" + "=" * 65)
-    print("  ZIP STRUCTURE RESULT: FAIL")
-    print("=" * 65)
-    sys.exit(1)

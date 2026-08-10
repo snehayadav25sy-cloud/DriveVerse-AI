@@ -26,7 +26,7 @@ class PedestrianPopulationEngine:
             return []
 
         # Density modifiers
-        time_mod = {"morning": 0.8, "noon": 0.5, "sunset": 0.9, "night": 0.2, "golden hour": 0.7}
+        time_mod = {"morning": 0.8, "noon": 0.5, "sunset": 0.9, "evening": 0.8, "night": 0.2, "golden hour": 0.7}
         weather_mod = {"rain": 0.4, "heavy_rain": 0.2, "fog": 0.5, "dust_storm": 0.3}
         t_mod = time_mod.get(time_of_day, 0.5)
         w_mod = weather_mod.get(weather, 1.0)

@@ -4,6 +4,8 @@ app/scenario_execution/session.py — Build 7: Execution session factory
 
 from __future__ import annotations
 
+import os
+import tempfile
 import uuid
 from typing import Any, Dict, Optional
 
@@ -46,4 +48,5 @@ def create_execution_session(
         seeds=default_seeds,
         timing=timing or TimingConfig(),
         map=map_config or MapConfig(),
+        recording={"output_directory": os.path.join(tempfile.gettempdir(), f"driveverse_{session_id[:8]}")},
     )

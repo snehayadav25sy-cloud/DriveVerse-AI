@@ -204,6 +204,7 @@ def build_map(req: LocationRequest):
             validator_passed=vresult["valid"],
             validator_errors=vresult["errors"],
             validator_warnings=vresult["warnings"],
+            location_query=req.location or f"{lat},{lon}",
             metadata={
                 "osm_elements": len(raw.get("elements", [])),
                 "road_count": len(roads),
@@ -235,12 +236,14 @@ def build_map(req: LocationRequest):
             errors=vresult["errors"],
         )
 
+        prov_dict = prov.model_dump()
+        prov_dict["provenance_hash"] = provenance_hash(prov)
         total_ms = round((time.perf_counter() - start) * 1000, 1)
         return BuildResponse(
             status="complete" if vresult["valid"] else "completed_with_errors",
             stages=stages,
             map_artifact=map_artifact,
-            provenance=prov.model_dump(),
+            provenance=prov_dict,
             error=None,
         )
 

@@ -6,12 +6,14 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 
 import tempfile
 import os
+import pytest
 
-print("=" * 65)
-print("  STEP 8 — Build 1/2: Dataset Generation")
-print("=" * 65)
 
-try:
+def test_dataset_integrity():
+    print("=" * 65)
+    print("  STEP 8 — Build 1/2: Dataset Generation")
+    print("=" * 65)
+
     with tempfile.TemporaryDirectory() as tmpdir:
         os.makedirs(os.path.join(tmpdir, "image_2"))
         os.makedirs(os.path.join(tmpdir, "velodyne"))
@@ -50,41 +52,18 @@ try:
         print(f"Sample LiDAR size: {os.path.getsize(sample_lidar)} bytes")
         print(f"Sample label size: {os.path.getsize(sample_label)} bytes")
         
-        checks = []
-        checks.append(("20 RGB files", len(rgb_files) == 20))
-        checks.append(("20 LiDAR files", len(lidar_files) == 20))
-        checks.append(("20 label files", len(label_files) == 20))
-        checks.append(("RGB files non-empty", all(os.path.getsize(f) > 0 for f in rgb_files[:5])))
-        checks.append(("LiDAR files non-empty", all(os.path.getsize(f) > 0 for f in lidar_files[:5])))
-        checks.append(("Label files non-empty", all(os.path.getsize(f) > 0 for f in label_files[:5])))
+        assert len(rgb_files) == 20
+        assert len(lidar_files) == 20
+        assert len(label_files) == 20
+        assert all(os.path.getsize(f) > 0 for f in rgb_files[:5])
+        assert all(os.path.getsize(f) > 0 for f in lidar_files[:5])
+        assert all(os.path.getsize(f) > 0 for f in label_files[:5])
         
         calib_path = os.path.join(tmpdir, "calib", "calib.txt")
         with open(calib_path, "w") as f:
             f.write("P0: 1.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 1.0\n")
-        checks.append(("calib folder exists", os.path.exists(calib_path)))
+        assert os.path.exists(calib_path)
         
         print("\n" + "=" * 65)
-        print("  VERIFICATION")
+        print("  BUILD 1/2 RESULT: PASS")
         print("=" * 65)
-        all_pass = True
-        for label, passed in checks:
-            status = "PASS" if passed else "FAIL"
-            if not passed:
-                all_pass = False
-            print(f"  [{status}]  {label}")
-        
-        print("\n" + "=" * 65)
-        if all_pass:
-            print("  BUILD 1/2 RESULT: PASS")
-        else:
-            print("  BUILD 1/2 RESULT: FAIL")
-        print("=" * 65)
-        
-        sys.exit(0 if all_pass else 1)
-        
-except Exception as e:
-    print(f"ERROR: {e}")
-    print("\n" + "=" * 65)
-    print("  BUILD 1/2 RESULT: FAIL")
-    print("=" * 65)
-    sys.exit(1)

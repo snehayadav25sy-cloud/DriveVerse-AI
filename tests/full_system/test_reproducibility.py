@@ -6,12 +6,14 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 
 import hashlib
 import json
+import pytest
 
-print("=" * 65)
-print("  STEP 10 — Reproducibility")
-print("=" * 65)
 
-try:
+def test_reproducibility():
+    print("=" * 65)
+    print("  STEP 10 — Reproducibility")
+    print("=" * 65)
+
     from app.scenario_execution.models import ExecutionSession, TimingConfig, MapConfig
     from app.scenario_execution.orchestrator import ScenarioOrchestrator
     from app.world_generation.models import WorldPlan, WorldCoordinate, VehiclePlan, PedestrianPlan, SensorConfig
@@ -62,46 +64,22 @@ try:
     session1 = orchestrator.create_session(world_plan, {"country": "india", "weather": "rain", "scenario_id": "scenario_repro_001"})
     session2 = orchestrator.create_session(world_plan, {"country": "india", "weather": "rain", "scenario_id": "scenario_repro_001"})
     
-    checks = []
-    checks.append(("seeds reproducible", session1.seeds == session2.seeds))
-    checks.append(("session IDs unique", session1.session_id != session2.session_id))
-    checks.append(("scenario preserved", scenario.country == "India"))
-    checks.append(("weather preserved", scenario.weather == "Rain"))
-    checks.append(("sensors preserved", "rgb" in scenario.sensors and "lidar" in scenario.sensors))
-    checks.append(("frames preserved", scenario.frames == 20))
-    checks.append(("export_format preserved", scenario.export_format == "kitti"))
+    assert session1.seeds == session2.seeds
+    assert session1.session_id != session2.session_id
+    assert scenario.country == "India"
+    assert scenario.weather == "Rain"
+    assert "rgb" in scenario.sensors and "lidar" in scenario.sensors
+    assert scenario.frames == 20
+    assert scenario.export_format == "kitti"
     
     plan1 = world_plan.model_dump()
     plan2 = world_plan.model_dump()
     hash1 = hashlib.sha256(json.dumps(plan1, sort_keys=True).encode()).hexdigest()
     hash2 = hashlib.sha256(json.dumps(plan2, sort_keys=True).encode()).hexdigest()
-    checks.append(("world plan hash reproducible", hash1 == hash2))
+    assert hash1 == hash2
     
     print("\n" + "=" * 65)
-    print("  VERIFICATION")
+    print("  REPRODUCIBILITY RESULT: PASS")
     print("=" * 65)
-    all_pass = True
-    for label, passed in checks:
-        status = "PASS" if passed else "FAIL"
-        if not passed:
-            all_pass = False
-        print(f"  [{status}]  {label}")
-    
     print(f"\nWorld plan hash 1: {hash1[:16]}...")
     print(f"World plan hash 2: {hash2[:16]}...")
-    
-    print("\n" + "=" * 65)
-    if all_pass:
-        print("  REPRODUCIBILITY RESULT: PASS")
-    else:
-        print("  REPRODUCIBILITY RESULT: FAIL")
-    print("=" * 65)
-    
-    sys.exit(0 if all_pass else 1)
-    
-except Exception as e:
-    print(f"ERROR: {e}")
-    print("\n" + "=" * 65)
-    print("  REPRODUCIBILITY RESULT: FAIL")
-    print("=" * 65)
-    sys.exit(1)

@@ -7,74 +7,69 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 import json
 import hashlib
 import requests
+import pytest
 
 API_BASE = "http://localhost:8000"
 
-print("=" * 65)
-print("  STEP 3 — Build 5: Geography Engine")
-print("=" * 65)
 
-try:
+def test_build5_geography_engine():
+    print("=" * 65)
+    print("  STEP 3 — Build 5: Geography Engine")
+    print("=" * 65)
+
     payload = {
-        "location_query": "MG Road, Bengaluru, India",
-        "country": "India",
-        "city": "Bengaluru",
+        "location": "MG Road, Bengaluru, India",
+        "radius_m": 500.0,
     }
-    resp = requests.post(f"{API_BASE}/geography/resolve", json=payload, timeout=60)
+    resp = requests.post(f"{API_BASE}/geography/build", json=payload, timeout=120)
     print(f"HTTP {resp.status_code}")
+    assert resp.status_code == 200, f"Expected HTTP 200, got {resp.status_code}"
     data = resp.json()
     print(json.dumps(data, indent=2))
     
-    checks = []
-    lat = data.get("latitude") or data.get("lat")
-    lon = data.get("longitude") or data.get("lon") or data.get("lng")
-    checks.append(("latitude non-null", lat is not None and lat != 0))
-    checks.append(("longitude non-null", lon is not None and lon != 0))
+    status = data.get("status", "")
+    assert status in ["complete", "completed_with_errors"], f"status={status}"
     
-    osm = data.get("osm_data", {})
-    checks.append(("OSM elements > 0", osm.get("elements", 0) > 0))
+    stages = data.get("stages", {})
     
-    roads = data.get("roads", [])
-    checks.append(("roads > 0", len(roads) > 0))
+    resolve = stages.get("resolve", {})
+    assert resolve.get("status") == "resolved", f"resolve={resolve}"
+    assert resolve.get("latitude") is not None, f"resolve={resolve}"
+    assert resolve.get("longitude") is not None, f"resolve={resolve}"
+    assert "bengaluru" in str(resolve.get("city", "")).lower(), f"resolve={resolve}"
     
-    nodes = data.get("nodes", [])
-    checks.append(("nodes > 0", len(nodes) > 0))
+    osm = stages.get("osm", {})
+    assert osm.get("status") == "downloaded", f"osm={osm}"
+    assert osm.get("element_count", 0) > 0, f"osm={osm}"
+    assert osm.get("road_count", 0) > 0, f"osm={osm}"
     
-    intersections = data.get("intersections", [])
-    checks.append(("intersections >= 0", len(intersections) >= 0))
+    graph = stages.get("graph", {})
+    assert graph.get("status") == "built", f"graph={graph}"
+    assert graph.get("node_count", 0) > 0, f"graph={graph}"
+    assert graph.get("edge_count", 0) > 0, f"graph={graph}"
+    assert graph.get("graph_hash") is not None, f"graph={graph}"
     
-    xodr_path = data.get("xodr_path") or data.get("opendrive_path")
-    xodr_exists = os.path.exists(xodr_path) if xodr_path else False
-    checks.append((".xodr file exists", xodr_exists))
+    projection = stages.get("projection", {})
+    assert projection.get("status") == "projected", f"projection={projection}"
     
-    xml_valid = data.get("xml_valid") or data.get("opendrive_valid")
-    checks.append(("XML validity reported", xml_valid is not None))
+    opendrive = stages.get("opendrive", {})
+    assert opendrive.get("status") == "compiled", f"opendrive={opendrive}"
+    assert opendrive.get("size_bytes", 0) > 0, f"opendrive={opendrive}"
+    assert opendrive.get("xodr_hash") is not None, f"opendrive={opendrive}"
     
-    geo_hash = data.get("geography_hash") or data.get("hash")
-    checks.append(("geography hash present", geo_hash is not None and len(str(geo_hash)) > 0))
+    validate = stages.get("validate", {})
+    assert validate.get("status") in ["valid", "invalid"], f"validate={validate}"
+    assert validate.get("statistics") is not None, f"validate={validate}"
+    
+    map_artifact = data.get("map_artifact")
+    assert map_artifact is not None, "map_artifact missing"
+    assert map_artifact.get("xodr_path") is not None, f"map_artifact={map_artifact}"
+    assert map_artifact.get("xodr_hash") is not None, f"map_artifact={map_artifact}"
+    
+    provenance = data.get("provenance")
+    assert provenance is not None, "provenance missing"
+    assert provenance.get("provenance_hash") is not None, f"provenance={provenance}"
     
     print("\n" + "=" * 65)
-    print("  VERIFICATION")
+    print("  BUILD 5 RESULT: PASS")
     print("=" * 65)
-    all_pass = True
-    for label, passed in checks:
-        status = "PASS" if passed else "FAIL"
-        if not passed:
-            all_pass = False
-        print(f"  [{status}]  {label}")
-    
-    print("\n" + "=" * 65)
-    if all_pass:
-        print("  BUILD 5 RESULT: PASS")
-    else:
-        print("  BUILD 5 RESULT: PARTIAL")
-    print("=" * 65)
-    
-    sys.exit(0 if all_pass else 1)
-    
-except Exception as e:
-    print(f"ERROR: {e}")
-    print("\n" + "=" * 65)
-    print("  BUILD 5 RESULT: FAIL")
-    print("=" * 65)
-    sys.exit(1)

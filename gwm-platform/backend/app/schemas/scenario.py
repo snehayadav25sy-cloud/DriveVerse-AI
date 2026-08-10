@@ -41,7 +41,7 @@ SUPPORTED_WEATHER: frozenset[str] = frozenset({
 })
 
 SUPPORTED_TIME_OF_DAY: frozenset[str] = frozenset({
-    "Day", "Night", "Dusk", "Dawn",
+    "Day", "Night", "Dusk", "Dawn", "Evening",
 })
 
 SUPPORTED_TRAFFIC_DENSITY: frozenset[str] = frozenset({
@@ -108,12 +108,14 @@ class ScenarioConfig(BaseModel):
     # ── Geography ──────────────────────────────────────────────────────────────
     country:  Optional[str] = None   # "Japan", "UAE", "UK" — Build 4 hook
     city:     Optional[str] = None   # "Tokyo", "Dubai", "London"
+    location_query: Optional[str] = None  # raw location text from prompt for Build 5 geography
+    named_road: Optional[str] = None  # "MG Road", "Main Street", etc.
     road_type: Optional[str] = None  # "Highway" | "City" | "Rural" | "Intersection" | "Parking"
     modifiers: List[str] = Field(default_factory=list)
 
     # ── Environment ────────────────────────────────────────────────────────────
     weather:     Optional[str] = None  # "Clear" | "Rain" | "Fog" | "Snow" | "Storm" | "Overcast"
-    time_of_day: Optional[str] = None  # "Day" | "Night" | "Dusk" | "Dawn"
+    time_of_day: Optional[str] = None  # "Day" | "Night" | "Dusk" | "Dawn" | "Evening"
     lighting:    Optional[str] = None  # "Default" | "Artificial" | "Overcast" | "Bright"
 
     # ── Traffic ────────────────────────────────────────────────────────────────

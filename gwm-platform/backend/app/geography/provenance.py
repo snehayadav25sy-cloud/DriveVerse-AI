@@ -103,6 +103,6 @@ def compute_map_provenance(
 
 def provenance_hash(prov: MapProvenance) -> str:
     """Deterministic hash of a provenance record for reproducibility checks."""
-    payload = prov.model_dump(exclude={"git_commit"})
+    payload = prov.model_dump(exclude={"git_commit", "provenance_hash"})
     raw = json.dumps(payload, sort_keys=True, separators=(",", ":"))
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()

@@ -106,6 +106,22 @@ def disconnect(client, actors: List[any]):
         pass
 
 
+def carla_alive(client, timeout: float = 5.0) -> bool:
+    """
+    Health-check: return True if the CARLA server is still responsive.
+    """
+    if client is None:
+        return False
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        try:
+            client.get_server_version()
+            return True
+        except Exception:
+            time.sleep(1)
+    return False
+
+
 def make_weather(
     cloudiness: float = 0.0,
     precipitation: float = 0.0,
