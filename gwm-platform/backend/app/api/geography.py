@@ -4,6 +4,7 @@ app/api/geography.py — Build 5: Geography API endpoints
 Endpoints:
   POST /geography/resolve  — resolve a location query to coordinates
   POST /geography/build    — full pipeline: resolve -> OSM -> graph -> OpenDRIVE -> validate
+  POST /geography/graph    — resolve + OSM + graph only; returns GeoJSON for deck.gl
 """
 
 from __future__ import annotations
