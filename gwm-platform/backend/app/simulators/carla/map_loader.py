@@ -33,7 +33,7 @@ def _sanitize_map_name(xodr_path: str) -> str:
 
 def _get_carla_maps_dir() -> str:
     """Return CARLA's Maps content directory."""
-    carla_root = os.environ.get("CARLA_ROOT", r"C:\carla\WindowsNoEditor")
+    carla_root = os.environ.get("CARLA_ROOT", r"C:\Users\sneha_nqarngz\Downloads\CARLA_0.9.16")
     return os.path.join(carla_root, "Content", "Maps")
 
 

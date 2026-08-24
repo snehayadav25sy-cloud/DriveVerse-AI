@@ -1,0 +1,74 @@
+id: mauritius
+version: 1.0.0
+schema_version: 1
+author: DriveVerse
+updated: "2026-08-24"
+
+supports:
+  auto_rickshaw: false        # Not a common vehicle in Mauritius
+  tram: false
+  train: false
+  snow_accumulation: false    # Mauritius does not experience snow
+  deformable_terrain: false
+
+rules:
+  drive_side: left            # Mauritius drives on the left
+  priority_to_the_right: true # Default rule at unsignaled junctions (unusual for LHD)
+  speed_limits:
+    motorway: 110             # M1/M2/M3
+    highway: 80               # Open roads (70-80 km/h)
+    urban: 60                 # City limits (often 40-60 km/h)
+    residential: 30           # Residential areas
+  signal_duration_s: 45
+  behavior:
+    aggressiveness: 0.50      
+    horn_frequency: 0.40      
+    stopping_distance_m: 2.5  
+    lane_discipline: 0.60     
+
+vehicle_mix:
+  # Real data from NLTA Mauritius 2025:
+  # Cars/Dual-purpose: ~56.8%
+  # Motorcycles: ~34.4%
+  # Buses/Trucks/Vans: ~8.8%
+  sedan: 0.57
+  motorcycle: 0.34
+  truck: 0.05
+  bus: 0.03
+  bicycle: 0.01
+
+pedestrians:
+  density: 0.40               
+  walking_speed: 1.2          
+
+weather_presets:
+  # Cyclone season runs November to May, peaking Dec-March
+  # Wet season (Summer) Nov-Apr
+  summer_wet:
+    rain: 80.0
+    cloudiness: 85.0
+    wind: 50.0
+    wetness: 90.0
+    fog: 15.0
+    sun_altitude: 45.0
+    sun_azimuth: 0.0
+    cyclone_season: true      # Used if schema allows
+  # Dry season (Winter) May-Oct
+  winter_dry:
+    rain: 10.0
+    cloudiness: 25.0
+    wind: 20.0
+    wetness: 5.0
+    fog: 5.0
+    sun_altitude: 60.0
+    sun_azimuth: 0.0
+    cyclone_season: false
+  heavy_rain:
+    rain: 100.0
+    cloudiness: 100.0
+    wind: 80.0
+    wetness: 100.0
+    fog: 40.0
+    sun_altitude: 20.0
+    sun_azimuth: 0.0
+    cyclone_season: true

@@ -54,12 +54,12 @@
         "Format \u2192 kitti"
       ],
       "unrecognised_tokens": [
+        "around",
         "road",
-        "monsoon",
         "driving",
-        "export",
         "sensors",
-        "around"
+        "monsoon",
+        "export"
       ],
       "source_prompt": "Generate a rainy monsoon evening driving scenario in Bengaluru, India around MG Road, with heavy traffic, motorcycles, cars, buses, pedestrians, RGB and LiDAR sensors, 20 frames, KITTI export.",
       "llm_provider": "regex",
@@ -215,7 +215,7 @@
           "east": 77.6117902
         },
         "raw": {
-          "place_id": 249231925,
+          "place_id": 252171452,
           "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
           "osm_type": "node",
           "osm_id": 6400857554,
@@ -250,8 +250,8 @@
             "77.6117902"
           ]
         },
-        "cached": true,
-        "timestamp": "2026-08-10T18:16:52Z"
+        "cached": false,
+        "timestamp": "2026-08-24T17:22:17Z"
       },
       "error": null
     }
@@ -1620,10 +1620,10 @@
         "seeds": {
           "world": 42,
           "traffic": 43,
-          "pedestrian": 930316784,
+          "pedestrian": 1632759455,
           "weather": 45,
-          "asset": 805587040,
-          "scenario": 1605328659
+          "asset": 282382530,
+          "scenario": 1012873602
         },
         "fallbacks": [],
         "warnings": [],
@@ -1632,11 +1632,11 @@
           "fallback": 0
         }
       },
-      "plan_hash": "145b1774af8a2b31d02abee6bcfccf66e8721eb895cb9014b88cad533000d786",
+      "plan_hash": "86fbc61eda1cbb83c073bb3da61a6bc9f16b94f31008c083c21dd9046cb89702",
       "provenance": {
         "country_profile_hash": "b91b60ba9f9afda2cb973e5173cf0a42ce5bf2ffb3c10b9bdd9d35296a290987",
         "geography_hash": "f7c9a6cddd2eba5775848815836a17180bd6825ca00545628d86135b6348c50d",
-        "world_plan_hash": "145b1774af8a2b31d02abee6bcfccf66e8721eb895cb9014b88cad533000d786",
+        "world_plan_hash": "86fbc61eda1cbb83c073bb3da61a6bc9f16b94f31008c083c21dd9046cb89702",
         "asset_registry_hash": "77c9740e5d2d12ba99eac68ff0dbcd624ec9dd1571b9c193a6a67ed7a34559b1",
         "build_version": "6.0.0",
         "schema_version": "1.0.0",
@@ -1644,10 +1644,10 @@
         "git_commit": "unknown",
         "world_seed": 42,
         "traffic_seed": 43,
-        "pedestrian_seed": 930316784,
+        "pedestrian_seed": 1632759455,
         "weather_seed": 45,
-        "asset_seed": 805587040,
-        "scenario_seed": 1605328659,
+        "asset_seed": 282382530,
+        "scenario_seed": 1012873602,
         "carla_version": "0.9.16",
         "fallbacks": [],
         "warnings": [],
@@ -1658,7 +1658,7 @@
   "build7_execution": {
     "status_code": 200,
     "data": {
-      "session_id": "098e0b08-e693-40a6-a974-f80c8cb5b0a0",
+      "session_id": "047b9fee-49df-441f-b39b-085998bffebd",
       "status": "READY",
       "preflight": {
         "passed": true,

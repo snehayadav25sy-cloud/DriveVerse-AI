@@ -25,7 +25,7 @@ def test_4_1_vegetation_generation():
     check(len(plans) > 0, f"Generated vegetation: {len(plans)}")
 
 def test_4_2_country_profiles():
-    for country in ["india", "dubai", "germany", "japan", "usa"]:
+    for country in ["india", "dubai", "germany", "japan", "usa", "mauritius"]:
         plan = WorldPlan(world_id="w1", seed=42, location_query="test", country=country, map_name="Town01",
                          carla_coordinate_origin=WorldCoordinate(x=0, y=0, z=0),
                          bounding_box=WorldBoundingBox(min_x=-100, max_x=100, min_y=-100, max_y=100))

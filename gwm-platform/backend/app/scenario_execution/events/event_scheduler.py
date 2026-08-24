@@ -27,6 +27,7 @@ class EventScheduler:
         "sudden_braking": "VEHICLE_BRAKING",
         "lane_blockage": "LANE_CLOSURE",
         "puddle_zone": "PUDDLE_ZONE",
+        "safety_operator_intervention": "SAFETY_OPERATOR_INTERVENTION",
     }
 
     def __init__(self, master_seed: int = 0, event_seed: int = 0):

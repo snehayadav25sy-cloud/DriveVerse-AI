@@ -70,7 +70,7 @@ def connect(
         raise CarlaAdapterError(
             f"CARLA server version mismatch: server reports {server_version}, "
             f"required {REQUIRED_VERSION}. Only "
-            f"C:\\carla\\WindowsNoEditor\\CarlaUE4.exe should ever "
+            f"C:\\Users\\sneha_nqarngz\\Downloads\\CARLA_0.9.16\\CarlaUE4.exe should ever "
             f"be launched."
         )
 

@@ -7,14 +7,16 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 import json
 import hashlib
 import requests
+import pytest
 
 API_BASE = "http://localhost:8000"
 
-print("=" * 65)
-print("  STEP 4 — Build 6: World Generation")
-print("=" * 65)
 
-try:
+def test_build6_world_generation():
+    print("=" * 65)
+    print("  STEP 4 — Build 6: World Generation")
+    print("=" * 65)
+
     payload = {
         "resolved_scenario": {
             "country": "India",
@@ -43,62 +45,40 @@ try:
     }
     resp = requests.post(f"{API_BASE}/world/plan", json=payload, timeout=120)
     print(f"HTTP {resp.status_code}")
+    assert resp.status_code == 200, f"Expected HTTP 200, got {resp.status_code}: {resp.text}"
     data = resp.json()
     print(json.dumps(data, indent=2))
     
-    checks = []
-    world_plan = data.get("plan", data)
+    assert data.get("world_id") is not None and len(str(data.get("world_id"))) > 0, "world_id missing"
     
-    checks.append(("world_id present", data.get("world_id") is not None and len(str(data.get("world_id"))) > 0))
-    checks.append(("seed present", world_plan.get("seed") == 42 or data.get("seed") == 42))
+    world_plan = data.get("plan", data)
+    assert world_plan.get("seed") == 42 or data.get("seed") == 42, "seed mismatch"
     
     vehicles = world_plan.get("vehicles", [])
-    checks.append(("vehicles present", len(vehicles) >= 0))
+    assert len(vehicles) >= 0
     
     pedestrians = world_plan.get("pedestrians", [])
-    checks.append(("pedestrians present", len(pedestrians) >= 0))
+    assert len(pedestrians) >= 0
     
     sensors = world_plan.get("sensors", [])
-    checks.append(("sensors present", len(sensors) >= 0))
+    assert len(sensors) >= 0
     
     buildings = world_plan.get("buildings", [])
-    checks.append(("buildings present", len(buildings) >= 0))
+    assert len(buildings) >= 0
     
     vegetation = world_plan.get("vegetation", [])
-    checks.append(("vegetation present", len(vegetation) >= 0))
+    assert len(vegetation) >= 0
     
     seeds = world_plan.get("seeds", {})
-    checks.append(("world_seed present", seeds.get("world_seed") == 42 or seeds.get("world") == 42))
-    checks.append(("traffic_seed present", seeds.get("traffic_seed") == 43 or seeds.get("traffic") == 43))
+    assert seeds.get("world_seed") == 42 or seeds.get("world") == 42, f"seeds={seeds}"
+    assert seeds.get("traffic_seed") == 43 or seeds.get("traffic") == 43, f"seeds={seeds}"
     
     plan_hash = data.get("plan_hash") or world_plan.get("plan_hash")
-    checks.append(("plan_hash present", plan_hash is not None and len(str(plan_hash)) > 0))
+    assert plan_hash is not None and len(str(plan_hash)) > 0, "plan_hash missing"
     
     provenance = data.get("provenance")
-    checks.append(("provenance present", provenance is not None))
+    assert provenance is not None, "provenance missing"
     
     print("\n" + "=" * 65)
-    print("  VERIFICATION")
+    print("  BUILD 6 RESULT: PASS")
     print("=" * 65)
-    all_pass = True
-    for label, passed in checks:
-        status_label = "PASS" if passed else "FAIL"
-        if not passed:
-            all_pass = False
-        print(f"  [{status_label}]  {label}")
-    
-    print("\n" + "=" * 65)
-    if all_pass:
-        print("  BUILD 6 RESULT: PASS")
-    else:
-        print("  BUILD 6 RESULT: FAIL")
-    print("=" * 65)
-    
-    sys.exit(0 if all_pass else 1)
-    
-except Exception as e:
-    print(f"ERROR: {e}")
-    print("\n" + "=" * 65)
-    print("  BUILD 6 RESULT: FAIL")
-    print("=" * 65)
-    sys.exit(1)
