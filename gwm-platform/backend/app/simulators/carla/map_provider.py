@@ -62,13 +62,16 @@ class OpenDriveArtifactProvider(MapProvider):
     """
     Handles Build 5 generated OpenDRIVE artifacts.
 
-    Preserves the known Build 5 gap:
-    CARLA 0.9.16 does not dynamically load OpenDRIVE from Python.
+    CARLA 0.9.16 OpenDRIVE loading strategies (in order):
+      1. Dynamic: client.generate_opendrive_world(xodr_content, params)
+      2. Static: copy .xodr to CARLA Maps/ dir, then client.load_world(map_name)
+      3. Fallback: load closest built-in CARLA town
     """
 
     def __init__(self, xodr_path: str):
         self.xodr_path = xodr_path
         self._map_name = os.path.basename(xodr_path).replace(".xodr", "")
+        self._load_method: Optional[str] = None
 
     def prepare(self, map_artifact: Dict[str, Any]) -> MapProviderState:
         if not os.path.exists(self.xodr_path):
@@ -76,16 +79,30 @@ class OpenDriveArtifactProvider(MapProvider):
             return MapProviderState.FAILED
         if not _CARLA_AVAILABLE:
             return MapProviderState.UNSUPPORTED
-        # Build 5 known gap: dynamic loading not supported in 0.9.16
-        logger.warning(
-            "Build 5 OpenDRIVE artifact detected. "
-            "CARLA 0.9.16 does not support dynamic OpenDRIVE loading via Python. "
-            f"Map must be placed in CARLA Maps/ directory and CARLA restarted with -map={self._map_name}"
-        )
-        return MapProviderState.DEPLOYMENT_REQUIRED
+        # Try dynamic first; if unavailable, fall back to static deployment
+        try:
+            import carla as _carla
+            _carla.OpendriveGenerationParameters
+            return MapProviderState.READY
+        except AttributeError:
+            logger.warning(
+                "CARLA 0.9.16 does not expose OpendriveGenerationParameters. "
+                "Falling back to static Maps/ directory deployment."
+            )
+            return MapProviderState.DEPLOYMENT_REQUIRED
 
     def load(self, client):
-        raise RuntimeError(
-            "OpenDRIVE dynamic loading is not supported in CARLA 0.9.16. "
-            f"Place {self.xodr_path} in CARLA's Maps/ directory and restart CARLA with -map={self._map_name}"
-        )
+        if not _CARLA_AVAILABLE:
+            raise RuntimeError("CARLA not available")
+
+        from app.simulators.carla.map_loader import load_opendrive_map
+        result = load_opendrive_map(self.xodr_path)
+
+        if not result["success"]:
+            raise RuntimeError(
+                f"Failed to load OpenDRIVE map: {result.get('error', 'unknown')}. "
+                f"Detail: {result.get('detail', 'none')}"
+            )
+
+        self._load_method = result.get("load_method")
+        return result

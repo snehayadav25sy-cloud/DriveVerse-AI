@@ -46,7 +46,7 @@ def connect(host=None, port=2000, timeout=60.0):
         raise RuntimeError(
             f"CARLA server version mismatch: server reports "
             f"{server_version}, required {REQUIRED_VERSION}. Only "
-            f"C:\\carla\\WindowsNoEditor\\CarlaUE4.exe should ever "
+            f"C:\\Users\\sneha_nqarngz\\Downloads\\CARLA_0.9.16\\CarlaUE4.exe should ever "
             f"be launched — check for other CARLA installs."
         )
 

@@ -19,7 +19,8 @@ const FLAG_MAP: Record<string, string> = {
   japan: '🇯🇵',
   dubai: '🇦🇪',
   germany: '🇩🇪',
-  uk: '🇬🇧'
+  uk: '🇬🇧',
+  mauritius: '🇲🇺'
 }
 
 export default function CountryProfiles() {
@@ -107,22 +108,11 @@ vehicle_mix:
   const handleOpenEdit = async (id: string) => {
     try {
       const rawProfile = await getCountry(id)
-      // Convert Pydantic object back into editable YAML preset format
-      // Or simply request the server endpoint (the server saves raw YAML)
-      // To simplify, we fetch and construct a clean YAML representation
-      import('yaml').then((YAML) => {
-        setYamlInput(YAML.stringify(rawProfile))
-        setEditingId(id)
-        setErrorMsg('')
-        setSuccessMsg('')
-        setIsEditorOpen(true)
-      }).catch(() => {
-        setYamlInput(JSON.stringify(rawProfile, null, 2))
-        setEditingId(id)
-        setErrorMsg('')
-        setSuccessMsg('')
-        setIsEditorOpen(true)
-      })
+      setYamlInput(JSON.stringify(rawProfile, null, 2))
+      setEditingId(id)
+      setErrorMsg('')
+      setSuccessMsg('')
+      setIsEditorOpen(true)
     } catch (e: any) {
       setErrorMsg('Failed to fetch country YAML details.')
     }

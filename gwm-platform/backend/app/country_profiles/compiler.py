@@ -91,7 +91,7 @@ class CountryCompiler:
         
         # Time penalties
         t_penalties = {
-            "night": 25, "sunset": 10, "golden hour": 5
+            "night": 25, "sunset": 10, "golden hour": 5, "evening": 5
         }
         difficulty += t_penalties.get(reality.time_of_day.lower().strip(), 0)
         

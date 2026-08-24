@@ -19,8 +19,12 @@ function relativeTime(iso: string) {
   if (hrs < 24) return `${hrs}h ago`
   return `${Math.floor(hrs / 24)}d ago`
 }
+import { useState } from 'react'
+import MauritiusPilotDashboard from '../components/MauritiusPilotDashboard'
+
 export default function Dashboard() {
   const { token } = useAuth();
+  const [selectedCountry, setSelectedCountry] = useState<'india' | 'mauritius'>('mauritius')
   
 
 
@@ -56,8 +60,35 @@ export default function Dashboard() {
       <Navbar title="Dashboard" subtitle="DriveVerse AI · Synthetic Dataset Platform" />
 
       <div className="p-8 space-y-8">
-        {/* Hero */}
-        <div className="card p-8 relative overflow-hidden bg-grid-pattern">
+        {/* Country Selector Header Bar */}
+        <div className="flex items-center justify-between bg-slate-900/80 border border-slate-800 p-4 rounded-2xl">
+          <div className="flex items-center gap-3">
+            <Globe className="text-brand-400" size={20} />
+            <div>
+              <h3 className="text-sm font-bold text-white">Active Regulator Pilot View</h3>
+              <p className="text-xs text-slate-400">Select target region to filter scenario coverage and geography</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <label className="text-xs font-semibold text-slate-400">Target Region:</label>
+            <select
+              value={selectedCountry}
+              onChange={(e) => setSelectedCountry(e.target.value as 'india' | 'mauritius')}
+              className="bg-slate-950 border border-slate-750 text-white text-xs font-bold px-3 py-2 rounded-xl focus:outline-none focus:border-brand-500 transition-all cursor-pointer"
+            >
+              <option value="mauritius">🇲🇺 Mauritius Pilot (Ebene / M1 Corridor)</option>
+              <option value="india">🇮🇳 India Baseline (Bengaluru / Mumbai)</option>
+            </select>
+          </div>
+        </div>
+
+        {selectedCountry === 'mauritius' ? (
+          <MauritiusPilotDashboard />
+        ) : (
+          <>
+            {/* Hero */}
+            <div className="card p-8 relative overflow-hidden bg-grid-pattern">
           <div className="absolute inset-0 bg-gradient-to-br from-brand-600/10 via-transparent to-violet-600/10 pointer-events-none" />
           <div className="relative z-10">
             <div className="flex items-center gap-2 mb-3">
@@ -196,6 +227,8 @@ export default function Dashboard() {
             </Link>
           ))}
         </div>
+        </>
+        )}
       </div>
     </div>
   )

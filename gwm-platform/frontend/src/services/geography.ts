@@ -78,11 +78,45 @@ export async function resolveLocation(
   return resp.data
 }
 
+export interface GraphGeoJSONResponse {
+  status: string
+  center_lat?: number
+  center_lon?: number
+  node_count: number
+  edge_count: number
+  elapsed_ms: number
+  geojson?: {
+    type: 'FeatureCollection'
+    features: GeoJSONFeature[]
+  }
+  error?: string
+}
+
+export interface GeoJSONFeature {
+  type: 'Feature'
+  geometry: {
+    type: 'LineString' | 'Point'
+    coordinates: number[] | number[][]
+  }
+  properties: Record<string, any>
+}
+
 export async function buildMap(
   location: string,
   radius_m: number = 500,
 ): Promise<BuildResponse> {
   const resp = await axios.post(`${API_BASE}/geography/build`, {
+    location,
+    radius_m,
+  })
+  return resp.data
+}
+
+export async function fetchRoadGraph(
+  location: string,
+  radius_m: number = 500,
+): Promise<GraphGeoJSONResponse> {
+  const resp = await axios.post(`${API_BASE}/geography/graph`, {
     location,
     radius_m,
   })

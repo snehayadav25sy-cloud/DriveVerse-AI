@@ -70,7 +70,7 @@ def connect(
         raise CarlaAdapterError(
             f"CARLA server version mismatch: server reports {server_version}, "
             f"required {REQUIRED_VERSION}. Only "
-            f"C:\\carla\\WindowsNoEditor\\CarlaUE4.exe should ever "
+            f"C:\\Users\\sneha_nqarngz\\Downloads\\CARLA_0.9.16\\CarlaUE4.exe should ever "
             f"be launched."
         )
 
@@ -104,6 +104,22 @@ def disconnect(client, actors: List[any]):
         client = None
     except Exception:
         pass
+
+
+def carla_alive(client, timeout: float = 5.0) -> bool:
+    """
+    Health-check: return True if the CARLA server is still responsive.
+    """
+    if client is None:
+        return False
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        try:
+            client.get_server_version()
+            return True
+        except Exception:
+            time.sleep(1)
+    return False
 
 
 def make_weather(

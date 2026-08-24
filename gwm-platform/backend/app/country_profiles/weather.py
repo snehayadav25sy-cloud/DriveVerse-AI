@@ -108,6 +108,7 @@ TIME_ALTITUDES = {
     "morning": 20.0,
     "noon": 75.0,
     "sunset": 5.0,
+    "evening": 10.0,
     "night": -60.0,
     "golden hour": 10.0
 }

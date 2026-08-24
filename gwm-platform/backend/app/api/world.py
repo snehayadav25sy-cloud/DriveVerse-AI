@@ -43,6 +43,7 @@ class WorldPlanRequest(BaseModel):
 class WorldPlanResponse(BaseModel):
     world_id: str
     plan: Dict[str, Any]
+    plan_hash: str
     provenance: Dict[str, Any]
 
 
@@ -70,6 +71,7 @@ async def create_world_plan(request: WorldPlanRequest):
         return WorldPlanResponse(
             world_id=world_id,
             plan=plan.model_dump(),
+            plan_hash=plan.plan_hash(),
             provenance=prov.model_dump(),
         )
     except Exception as e:

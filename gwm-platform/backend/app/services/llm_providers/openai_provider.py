@@ -28,7 +28,7 @@ You MUST respond with ONLY a valid JSON object matching this schema (no extra te
   "city": string or null,
   "road_type": "Highway"|"City"|"Rural"|"Intersection"|"Residential"|"Suburban"|"Parking"|null,
   "weather": "Clear"|"Rain"|"Fog"|"Snow"|"Storm"|"Overcast"|null,
-  "time_of_day": "Day"|"Night"|"Dusk"|"Dawn"|null,
+  "time_of_day": "Day"|"Night"|"Dusk"|"Dawn"|"Evening"|null,
   "lighting": "Default"|"Artificial"|"Overcast"|"Bright"|null,
   "traffic_density": "None"|"Light"|"Medium"|"Heavy"|"Gridlock"|null,
   "vehicles": {"car": int, "truck": int, "bus": int, "motorcycle": int, "bicycle": int, "van": int},

@@ -83,6 +83,15 @@ class WorldPlanner:
                 "asset": random.randint(0, 2**31 - 1),
                 "scenario": random.randint(0, 2**31 - 1),
             }
+        else:
+            seeds = {
+                "world": seeds.get("world", seeds.get("world_seed", random.randint(0, 2**31 - 1))),
+                "traffic": seeds.get("traffic", seeds.get("traffic_seed", random.randint(0, 2**31 - 1))),
+                "pedestrian": seeds.get("pedestrian", seeds.get("pedestrian_seed", random.randint(0, 2**31 - 1))),
+                "weather": seeds.get("weather", seeds.get("weather_seed", random.randint(0, 2**31 - 1))),
+                "asset": seeds.get("asset", seeds.get("asset_seed", random.randint(0, 2**31 - 1))),
+                "scenario": seeds.get("scenario", seeds.get("scenario_seed", random.randint(0, 2**31 - 1))),
+            }
 
         origin = self._origin_from_artifact()
         bbox = self._compute_bounding_box(origin)

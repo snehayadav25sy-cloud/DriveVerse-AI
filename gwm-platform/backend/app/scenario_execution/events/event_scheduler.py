@@ -15,6 +15,21 @@ from app.scenario_execution.models import ScenarioEventPlan, EventTrigger, Trigg
 class EventScheduler:
     """Deterministic event scheduler."""
 
+    _EVENT_TYPE_NORMALIZATION = {
+        "lane_closure": "LANE_CLOSURE",
+        "construction": "ROAD_CONSTRUCTION",
+        "parked_vehicle": "VEHICLE_BRAKING",
+        "broken_down_vehicle": "VEHICLE_BRAKING",
+        "pedestrian_crossing": "PEDESTRIAN_CROSSING",
+        "jaywalking": "JAYWALKING",
+        "accident": "ACCIDENT",
+        "emergency_vehicle": "EMERGENCY_VEHICLE",
+        "sudden_braking": "VEHICLE_BRAKING",
+        "lane_blockage": "LANE_CLOSURE",
+        "puddle_zone": "PUDDLE_ZONE",
+        "safety_operator_intervention": "SAFETY_OPERATOR_INTERVENTION",
+    }
+
     def __init__(self, master_seed: int = 0, event_seed: int = 0):
         self.master_seed = master_seed
         self.event_seed = event_seed
@@ -27,7 +42,9 @@ class EventScheduler:
         scheduled: List[ScenarioEventPlan] = []
 
         for i, event_data in enumerate(events):
-            event_type = EventType(event_data.get("event_type", "VEHICLE_BRAKING"))
+            raw_type = event_data.get("event_type", "VEHICLE_BRAKING")
+            normalized_type = self._EVENT_TYPE_NORMALIZATION.get(raw_type, raw_type.upper())
+            event_type = EventType(normalized_type)
             start_time = event_data.get("start_time_s", rng.uniform(0, total_duration_s))
             duration = event_data.get("duration_s", 10.0)
             priority = event_data.get("priority", 0)

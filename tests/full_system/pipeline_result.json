@@ -1,0 +1,1717 @@
+{
+  "build3_prompt": {
+    "status_code": 200,
+    "data": {
+      "schema_version": "3.1",
+      "country": "India",
+      "city": "Bengaluru",
+      "location_query": "MG Road, Bengaluru, India",
+      "named_road": "MG Road",
+      "road_type": null,
+      "modifiers": [],
+      "weather": "Rain",
+      "time_of_day": "Evening",
+      "lighting": null,
+      "traffic_density": "Heavy",
+      "vehicles": {
+        "car": 150,
+        "truck": 30,
+        "bus": 0,
+        "motorcycle": 20,
+        "bicycle": 0,
+        "van": 0
+      },
+      "pedestrians": 0,
+      "sensors": [
+        "lidar",
+        "rgb"
+      ],
+      "frames": 20,
+      "export_format": "kitti",
+      "carla_map": "Town01",
+      "optimizer_applied": true,
+      "validation_passed": true,
+      "confidence": {
+        "country": 1.0,
+        "city": 1.0,
+        "named_road": 1.0,
+        "weather": 1.0,
+        "time_of_day": 1.0,
+        "traffic_density": 1.0,
+        "sensors": 1.0,
+        "frames": 1.0,
+        "export_format": 1.0
+      },
+      "explanation": [
+        "Country \u2192 India",
+        "City \u2192 Bengaluru",
+        "Named road \u2192 MG Road",
+        "Weather \u2192 Rain",
+        "Time of day \u2192 Evening",
+        "Traffic \u2192 Heavy",
+        "Sensors \u2192 ['lidar', 'rgb']",
+        "Frames \u2192 20",
+        "Format \u2192 kitti"
+      ],
+      "unrecognised_tokens": [
+        "around",
+        "road",
+        "driving",
+        "sensors",
+        "monsoon",
+        "export"
+      ],
+      "source_prompt": "Generate a rainy monsoon evening driving scenario in Bengaluru, India around MG Road, with heavy traffic, motorcycles, cars, buses, pedestrians, RGB and LiDAR sensors, 20 frames, KITTI export.",
+      "llm_provider": "regex",
+      "validation": {
+        "passed": true,
+        "errors": [],
+        "warnings": [
+          {
+            "level": "warning",
+            "field": "traffic_density",
+            "message": "Traffic density set but no vehicles configured",
+            "value": "Heavy",
+            "limit": null
+          }
+        ],
+        "infos": []
+      },
+      "optimizer_changes": [
+        {
+          "field": "vehicles.car",
+          "from_value": 0,
+          "to_value": 150,
+          "reason": "Heavy traffic: seeding 150 cars"
+        },
+        {
+          "field": "vehicles.truck",
+          "from_value": 0,
+          "to_value": 30,
+          "reason": "Heavy traffic: seeding 30 trucks"
+        },
+        {
+          "field": "vehicles.motorcycle",
+          "from_value": 0,
+          "to_value": 20,
+          "reason": "Heavy traffic: seeding 20 motorcycles"
+        }
+      ],
+      "translation": {
+        "carla_map": "Town01",
+        "confidence": 0.3,
+        "source": "default",
+        "note": "No city or road_type matched; defaulting to Town01"
+      },
+      "estimate": {
+        "estimated_duration_seconds": 4.0,
+        "estimated_disk_mb": 6.31,
+        "estimated_gpu_vram_mb": 2012.0,
+        "estimated_frames_actual": 20,
+        "cost_breakdown": {
+          "lidar": "3.9 MB",
+          "rgb": "2.3 MB",
+          "labels": "0.0 MB",
+          "metadata": "0.0 MB"
+        },
+        "performance_warnings": []
+      }
+    }
+  },
+  "build4_country": {
+    "status_code": 200,
+    "data": {
+      "id": "india",
+      "version": "1.0.0",
+      "schema_version": 1,
+      "extends": null,
+      "author": "DriveVerse",
+      "updated": "2026-08-06",
+      "supports": {
+        "auto_rickshaw": false,
+        "tram": false,
+        "train": false,
+        "snow_accumulation": false,
+        "deformable_terrain": false
+      },
+      "rules": {
+        "drive_side": "left",
+        "speed_limits": {
+          "highway": 80,
+          "urban": 50,
+          "residential": 30,
+          "school": 20
+        },
+        "signal_duration_s": 45,
+        "behavior": {
+          "aggressiveness": 0.72,
+          "horn_frequency": 0.85,
+          "stopping_distance_m": 1.8,
+          "lane_discipline": 0.35
+        }
+      },
+      "weather_presets": {
+        "monsoon": {
+          "rain": 95.0,
+          "cloudiness": 100.0,
+          "wind": 65.0,
+          "wetness": 100.0,
+          "fog": 25.0,
+          "sun_altitude": 15.0,
+          "sun_azimuth": 0.0
+        },
+        "hot_dry": {
+          "rain": 0.0,
+          "cloudiness": 10.0,
+          "wind": 15.0,
+          "wetness": 0.0,
+          "fog": 0.0,
+          "sun_altitude": 75.0,
+          "sun_azimuth": 0.0
+        },
+        "dust_haze": {
+          "rain": 0.0,
+          "cloudiness": 30.0,
+          "wind": 30.0,
+          "wetness": 0.0,
+          "fog": 35.0,
+          "sun_altitude": 40.0,
+          "sun_azimuth": 0.0
+        }
+      },
+      "vehicle_mix": {
+        "motorcycle": 0.38,
+        "sedan": 0.28,
+        "auto_rickshaw": 0.12,
+        "truck": 0.1,
+        "bus": 0.08,
+        "bicycle": 0.04
+      },
+      "pedestrians": {
+        "density": 0.75,
+        "walking_speed": 1.0
+      }
+    }
+  },
+  "build5_geography": {
+    "status_code": 200,
+    "data": {
+      "status": "resolved",
+      "query": "MG Road, Bengaluru, India",
+      "resolution": {
+        "query": "MG Road, Bengaluru, India",
+        "provider": "nominatim",
+        "latitude": 12.9755264,
+        "longitude": 77.6067902,
+        "display_name": "Mahatma Gandhi Road, Shanthala Nagar, Ashokanagar, Bengaluru Central City Corporation, Bengaluru, Bangalore North, Bengaluru Urban, Karnataka, 560001, India",
+        "country": "India",
+        "country_code": "in",
+        "state": "Karnataka",
+        "city": "Bengaluru",
+        "bounding_box": {
+          "south": 12.9705264,
+          "north": 12.9805264,
+          "west": 77.6017902,
+          "east": 77.6117902
+        },
+        "raw": {
+          "place_id": 252171452,
+          "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+          "osm_type": "node",
+          "osm_id": 6400857554,
+          "lat": "12.9755264",
+          "lon": "77.6067902",
+          "class": "railway",
+          "type": "station",
+          "place_rank": 30,
+          "importance": 0.2772938966131108,
+          "addresstype": "railway",
+          "name": "Mahatma Gandhi Road",
+          "display_name": "Mahatma Gandhi Road, Shanthala Nagar, Ashokanagar, Bengaluru Central City Corporation, Bengaluru, Bangalore North, Bengaluru Urban, Karnataka, 560001, India",
+          "address": {
+            "railway": "Mahatma Gandhi Road",
+            "road": "Mahatma Gandhi Road",
+            "quarter": "Shanthala Nagar",
+            "suburb": "Ashokanagar",
+            "city_district": "Bengaluru Central City Corporation",
+            "city": "Bengaluru",
+            "county": "Bangalore North",
+            "state_district": "Bengaluru Urban",
+            "state": "Karnataka",
+            "ISO3166-2-lvl4": "IN-KA",
+            "postcode": "560001",
+            "country": "India",
+            "country_code": "in"
+          },
+          "boundingbox": [
+            "12.9705264",
+            "12.9805264",
+            "77.6017902",
+            "77.6117902"
+          ]
+        },
+        "cached": false,
+        "timestamp": "2026-08-24T17:22:17Z"
+      },
+      "error": null
+    }
+  },
+  "build6_world": {
+    "status_code": 200,
+    "data": {
+      "world_id": "35e0617b1f156009",
+      "plan": {
+        "world_id": "35e0617b1f156009",
+        "seed": 42,
+        "location_query": "unknown",
+        "country": "india",
+        "map_name": "Town01",
+        "carla_coordinate_origin": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "buildings": [],
+        "vegetation": [
+          {
+            "vegetation_id": "veg_0000",
+            "semantic_type": "tree",
+            "position": {
+              "x": 69.15569203511035,
+              "y": -235.5946654095572,
+              "z": 0.0
+            },
+            "height_m": 7.3357057715571745,
+            "rotation_deg": 265.1296370990445,
+            "scale": 1.0706797949691644,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "vegetation_id": "veg_0001",
+            "semantic_type": "palm",
+            "position": {
+              "x": 194.52106558160335,
+              "y": -204.8783390158096,
+              "z": 0.0
+            },
+            "height_m": 8.589391658314211,
+            "rotation_deg": 78.7096709292972,
+            "scale": 1.002142115241345,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "vegetation_id": "veg_0002",
+            "semantic_type": "palm",
+            "position": {
+              "x": -234.83815903680363,
+              "y": -149.37652525942235,
+              "z": 0.0
+            },
+            "height_m": 10.13482444180965,
+            "rotation_deg": 79.35862393465081,
+            "scale": 1.0357062735503635,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "vegetation_id": "veg_0003",
+            "semantic_type": "bush",
+            "position": {
+              "x": 153.477506512202,
+              "y": -244.77661519968174,
+              "z": 0.0
+            },
+            "height_m": 1.589162727744702,
+            "rotation_deg": 122.49018594647707,
+            "scale": 0.8621917999247126,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "vegetation_id": "veg_0004",
+            "semantic_type": "tree",
+            "position": {
+              "x": 226.7776838145635,
+              "y": -81.04910562413713,
+              "z": 0.0
+            },
+            "height_m": 7.032119304400314,
+            "rotation_deg": 305.09797188508554,
+            "scale": 1.0414904125467563,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "vegetation_id": "veg_0005",
+            "semantic_type": "palm",
+            "position": {
+              "x": 152.33562354409258,
+              "y": 113.94696620013366,
+              "z": 0.0
+            },
+            "height_m": 11.419347291938113,
+            "rotation_deg": 136.27237579500726,
+            "scale": 1.0208162525092908,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "vegetation_id": "veg_0006",
+            "semantic_type": "bush",
+            "position": {
+              "x": 163.38471346948546,
+              "y": 58.78579717266604,
+              "z": 0.0
+            },
+            "height_m": 1.534808465365543,
+            "rotation_deg": 253.64586103737244,
+            "scale": 0.8183297534622649,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "vegetation_id": "veg_0007",
+            "semantic_type": "tree",
+            "position": {
+              "x": -134.96245527683277,
+              "y": -104.46357005335486,
+              "z": 0.0
+            },
+            "height_m": 7.358698127266472,
+            "rotation_deg": 36.36051458750248,
+            "scale": 0.9111894412440369,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "vegetation_id": "veg_0008",
+            "semantic_type": "tree",
+            "position": {
+              "x": 67.29948435514251,
+              "y": -67.04323923083822,
+              "z": 0.0
+            },
+            "height_m": 7.302816873851571,
+            "rotation_deg": 96.11201593768081,
+            "scale": 1.1746618350849976,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "vegetation_id": "veg_0009",
+            "semantic_type": "tree",
+            "position": {
+              "x": 73.42555108231039,
+              "y": 54.12897881082614,
+              "z": 0.0
+            },
+            "height_m": 8.549904315080838,
+            "rotation_deg": 58.82489775429422,
+            "scale": 0.9517821767030591,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "vegetation_id": "veg_0010",
+            "semantic_type": "palm",
+            "position": {
+              "x": 242.80358191575124,
+              "y": 69.43988088763007,
+              "z": 0.0
+            },
+            "height_m": 10.553842752969624,
+            "rotation_deg": 303.42669126833147,
+            "scale": 1.1103999646184979,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "vegetation_id": "veg_0011",
+            "semantic_type": "tree",
+            "position": {
+              "x": -134.39215630580424,
+              "y": -232.07827902359728,
+              "z": 0.0
+            },
+            "height_m": 7.442578102341686,
+            "rotation_deg": 75.95382369107753,
+            "scale": 1.1771638857340219,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "vegetation_id": "veg_0012",
+            "semantic_type": "palm",
+            "position": {
+              "x": 186.67834273044377,
+              "y": -91.91977112395494,
+              "z": 0.0
+            },
+            "height_m": 9.686895703181992,
+            "rotation_deg": 329.23713230659564,
+            "scale": 0.9835407410349595,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "vegetation_id": "veg_0013",
+            "semantic_type": "palm",
+            "position": {
+              "x": -116.61943741696598,
+              "y": -125.6727561837842,
+              "z": 0.0
+            },
+            "height_m": 9.288224825568806,
+            "rotation_deg": 210.4509564804746,
+            "scale": 1.1591291534409907,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "vegetation_id": "veg_0014",
+            "semantic_type": "grass",
+            "position": {
+              "x": -49.89734945036295,
+              "y": -139.21690345798748,
+              "z": 0.0
+            },
+            "height_m": 0.3008573664308818,
+            "rotation_deg": 32.7273883825658,
+            "scale": 0.8188465501698938,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "vegetation_id": "veg_0015",
+            "semantic_type": "bush",
+            "position": {
+              "x": -193.61403134607306,
+              "y": 63.213236684732635,
+              "z": 0.0
+            },
+            "height_m": 1.464971985059858,
+            "rotation_deg": 22.869974214704566,
+            "scale": 0.9526477146026147,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "vegetation_id": "veg_0016",
+            "semantic_type": "grass",
+            "position": {
+              "x": 246.076204599088,
+              "y": 14.440715169171938,
+              "z": 0.0
+            },
+            "height_m": 0.33247017320110483,
+            "rotation_deg": 4.133167899415069,
+            "scale": 1.0882887277440778,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "vegetation_id": "veg_0017",
+            "semantic_type": "tree",
+            "position": {
+              "x": 90.12834303718108,
+              "y": 18.337283882762392,
+              "z": 0.0
+            },
+            "height_m": 8.33830831659154,
+            "rotation_deg": 40.15878249451552,
+            "scale": 0.973906100267642,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "vegetation_id": "veg_0018",
+            "semantic_type": "bush",
+            "position": {
+              "x": -22.95304166071361,
+              "y": 225.09270005045573,
+              "z": 0.0
+            },
+            "height_m": 1.3935250728379909,
+            "rotation_deg": 180.2110006981074,
+            "scale": 0.8714607522120525,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "vegetation_id": "veg_0019",
+            "semantic_type": "tree",
+            "position": {
+              "x": 204.66340831503095,
+              "y": 183.77721063903635,
+              "z": 0.0
+            },
+            "height_m": 8.333478787678413,
+            "rotation_deg": 219.22927611774205,
+            "scale": 0.861135707419854,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "vegetation_id": "veg_0020",
+            "semantic_type": "bush",
+            "position": {
+              "x": 130.20535683727502,
+              "y": 19.531998939334358,
+              "z": 0.0
+            },
+            "height_m": 1.5136591524878298,
+            "rotation_deg": 0.2058826060596619,
+            "scale": 0.9296624228018693,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "vegetation_id": "veg_0021",
+            "semantic_type": "bush",
+            "position": {
+              "x": -238.33953577662717,
+              "y": 212.83291366725007,
+              "z": 0.0
+            },
+            "height_m": 1.6492494882125308,
+            "rotation_deg": 110.70508514495812,
+            "scale": 0.8231700665976751,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "vegetation_id": "veg_0022",
+            "semantic_type": "tree",
+            "position": {
+              "x": 187.4927612052041,
+              "y": 221.68692486780503,
+              "z": 0.0
+            },
+            "height_m": 7.966377111959873,
+            "rotation_deg": 24.9165066486181,
+            "scale": 1.1042408661028926,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "vegetation_id": "veg_0023",
+            "semantic_type": "palm",
+            "position": {
+              "x": 131.85387693626592,
+              "y": -184.31783360811767,
+              "z": 0.0
+            },
+            "height_m": 10.149410780484832,
+            "rotation_deg": 95.42038641842127,
+            "scale": 1.1489732164341029,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "vegetation_id": "veg_0024",
+            "semantic_type": "palm",
+            "position": {
+              "x": -38.12358166036009,
+              "y": -142.9480901007273,
+              "z": 0.0
+            },
+            "height_m": 10.689793207269929,
+            "rotation_deg": 72.41438282029053,
+            "scale": 0.9246865165203579,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "vegetation_id": "veg_0025",
+            "semantic_type": "palm",
+            "position": {
+              "x": 245.59408090380373,
+              "y": 74.33951658916891,
+              "z": 0.0
+            },
+            "height_m": 10.052727523106771,
+            "rotation_deg": 43.56151051257566,
+            "scale": 0.8898789348126229,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "vegetation_id": "veg_0026",
+            "semantic_type": "tree",
+            "position": {
+              "x": -80.30956117486215,
+              "y": 43.8011243547877,
+              "z": 0.0
+            },
+            "height_m": 7.3285217226837425,
+            "rotation_deg": 25.557510963251712,
+            "scale": 1.0524411829080396,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "vegetation_id": "veg_0027",
+            "semantic_type": "bush",
+            "position": {
+              "x": -134.44487522966745,
+              "y": 201.08832645103945,
+              "z": 0.0
+            },
+            "height_m": 1.3068858074498941,
+            "rotation_deg": 85.68166837283827,
+            "scale": 1.0675911113185121,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "vegetation_id": "veg_0028",
+            "semantic_type": "grass",
+            "position": {
+              "x": -141.73854354426246,
+              "y": -182.3733230323876,
+              "z": 0.0
+            },
+            "height_m": 0.30639387839927557,
+            "rotation_deg": 170.1615694722459,
+            "scale": 1.1138477697163014,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "vegetation_id": "veg_0029",
+            "semantic_type": "tree",
+            "position": {
+              "x": 152.5185108922551,
+              "y": -153.55668247650866,
+              "z": 0.0
+            },
+            "height_m": 7.834522837775306,
+            "rotation_deg": 152.48830428717147,
+            "scale": 0.98680986721467,
+            "asset": null,
+            "is_fallback": false
+          }
+        ],
+        "street_furniture": [
+          {
+            "furniture_id": "furn_0000",
+            "semantic_type": "parking_meter",
+            "position": {
+              "x": -124.74364216037864,
+              "y": -72.12958616495115,
+              "z": 0.0
+            },
+            "rotation_deg": 318.4758325504799,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "furniture_id": "furn_0001",
+            "semantic_type": "barrier",
+            "position": {
+              "x": -5.329627473139396,
+              "y": 247.5382561852694,
+              "z": 0.0
+            },
+            "rotation_deg": 173.18963654659782,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "furniture_id": "furn_0002",
+            "semantic_type": "guard_rail",
+            "position": {
+              "x": -163.64368032956352,
+              "y": 62.85040096578069,
+              "z": 0.0
+            },
+            "rotation_deg": 101.02962708693664,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "furniture_id": "furn_0003",
+            "semantic_type": "trash_bin",
+            "position": {
+              "x": 186.09432253539995,
+              "y": -70.96784402853768,
+              "z": 0.0
+            },
+            "rotation_deg": 305.61824434943935,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "furniture_id": "furn_0004",
+            "semantic_type": "bollard",
+            "position": {
+              "x": 106.78131710761113,
+              "y": 220.39933901732746,
+              "z": 0.0
+            },
+            "rotation_deg": 274.5806020049786,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "furniture_id": "furn_0005",
+            "semantic_type": "lamp_post",
+            "position": {
+              "x": -147.80617692449061,
+              "y": -196.93354091918332,
+              "z": 0.0
+            },
+            "rotation_deg": 115.18169664429251,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "furniture_id": "furn_0006",
+            "semantic_type": "lamp_post",
+            "position": {
+              "x": 59.54631936849381,
+              "y": -56.68074845845652,
+              "z": 0.0
+            },
+            "rotation_deg": 62.7253832717625,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "furniture_id": "furn_0007",
+            "semantic_type": "trash_bin",
+            "position": {
+              "x": 234.41646515809452,
+              "y": 211.22536884493297,
+              "z": 0.0
+            },
+            "rotation_deg": 288.8669452737473,
+            "asset": null,
+            "is_fallback": false
+          },
+          {
+            "furniture_id": "furn_0008",
+            "semantic_type": "parking_meter",
+            "position": {
+              "x": 127.04742720162625,
+              "y": 25.58955835325662,
+              "z": 0.0
+            },
+            "rotation_deg": 185.3017739961419,
+            "asset": null,
+            "is_fallback": false
+          }
+        ],
+        "signs": [
+          {
+            "sign_id": "sign_0000",
+            "sign_type": "speed_limit",
+            "value": 50.0,
+            "position": {
+              "x": 139.4180548863199,
+              "y": 51.079416574767436,
+              "z": 0.0
+            },
+            "rotation_deg": 181.96737389476797,
+            "asset": null,
+            "is_fallback": false,
+            "country": "india",
+            "source": "country_profile"
+          },
+          {
+            "sign_id": "sign_0001",
+            "sign_type": "pedestrian_crossing",
+            "value": null,
+            "position": {
+              "x": -95.8305759693697,
+              "y": 164.53451972519542,
+              "z": 0.0
+            },
+            "rotation_deg": 2.581502532596338,
+            "asset": null,
+            "is_fallback": false,
+            "country": "india",
+            "source": "country_profile"
+          },
+          {
+            "sign_id": "sign_0002",
+            "sign_type": "pedestrian_crossing",
+            "value": null,
+            "position": {
+              "x": 97.94354534131429,
+              "y": -207.1989480023921,
+              "z": 0.0
+            },
+            "rotation_deg": 276.376719786755,
+            "asset": null,
+            "is_fallback": false,
+            "country": "india",
+            "source": "country_profile"
+          },
+          {
+            "sign_id": "sign_0003",
+            "sign_type": "yield",
+            "value": null,
+            "position": {
+              "x": 210.2636321323787,
+              "y": 175.90998929284507,
+              "z": 0.0
+            },
+            "rotation_deg": 304.8501067174348,
+            "asset": null,
+            "is_fallback": false,
+            "country": "india",
+            "source": "country_profile"
+          }
+        ],
+        "traffic_lights": [
+          {
+            "traffic_light_id": "tl_0000",
+            "position": {
+              "x": -15.2618508040552,
+              "y": -17.210062159006355,
+              "z": 0.0
+            },
+            "rotation_deg": 124.78445997665918,
+            "asset": null,
+            "is_fallback": false,
+            "phase_duration_s": 30.0,
+            "offset_s": 15.078081114034202,
+            "country": "india",
+            "source": "profile_default"
+          },
+          {
+            "traffic_light_id": "tl_0001",
+            "position": {
+              "x": -20.10586143974092,
+              "y": 26.012645243543773,
+              "z": 0.0
+            },
+            "rotation_deg": 282.65942810498404,
+            "asset": null,
+            "is_fallback": false,
+            "phase_duration_s": 30.0,
+            "offset_s": 22.203471173913286,
+            "country": "india",
+            "source": "profile_default"
+          },
+          {
+            "traffic_light_id": "tl_0002",
+            "position": {
+              "x": -239.81889984407,
+              "y": 141.23943865302164,
+              "z": 0.0
+            },
+            "rotation_deg": 340.4841849938367,
+            "asset": null,
+            "is_fallback": false,
+            "phase_duration_s": 30.0,
+            "offset_s": 13.389649813955975,
+            "country": "india",
+            "source": "profile_default"
+          },
+          {
+            "traffic_light_id": "tl_0003",
+            "position": {
+              "x": 149.10673334154603,
+              "y": 40.927286978254244,
+              "z": 0.0
+            },
+            "rotation_deg": 314.8471269254288,
+            "asset": null,
+            "is_fallback": false,
+            "phase_duration_s": 30.0,
+            "offset_s": 16.815848832129447,
+            "country": "india",
+            "source": "profile_default"
+          },
+          {
+            "traffic_light_id": "tl_0004",
+            "position": {
+              "x": 63.11363596788016,
+              "y": 88.85792872539923,
+              "z": 0.0
+            },
+            "rotation_deg": 202.70560063385597,
+            "asset": null,
+            "is_fallback": false,
+            "phase_duration_s": 30.0,
+            "offset_s": 24.91513276059851,
+            "country": "india",
+            "source": "profile_default"
+          }
+        ],
+        "vehicles": [
+          {
+            "vehicle_id": "veh_0000",
+            "semantic_type": "suv",
+            "blueprint_id": null,
+            "position": {
+              "x": 1.6404817054567218,
+              "y": 192.0735279058411,
+              "z": 0.0
+            },
+            "rotation_deg": 337.3673636280384,
+            "color": null,
+            "is_parked": false,
+            "is_ego": true,
+            "speed_ms": 9.752262500688582,
+            "route": []
+          },
+          {
+            "vehicle_id": "veh_0001",
+            "semantic_type": "sedan",
+            "blueprint_id": null,
+            "position": {
+              "x": -246.50743230042806,
+              "y": 33.871510561227694,
+              "z": 0.0
+            },
+            "rotation_deg": 150.9353315201718,
+            "color": null,
+            "is_parked": false,
+            "is_ego": false,
+            "speed_ms": 11.860180094546065,
+            "route": []
+          },
+          {
+            "vehicle_id": "veh_0002",
+            "semantic_type": "sedan",
+            "blueprint_id": null,
+            "position": {
+              "x": 5.213581094472687,
+              "y": 233.86991341533275,
+              "z": 0.0
+            },
+            "rotation_deg": 91.68320449693638,
+            "color": null,
+            "is_parked": false,
+            "is_ego": false,
+            "speed_ms": 12.241515527411938,
+            "route": []
+          },
+          {
+            "vehicle_id": "veh_0003",
+            "semantic_type": "sedan",
+            "blueprint_id": null,
+            "position": {
+              "x": -105.60209687889974,
+              "y": -240.98030916119833,
+              "z": 0.0
+            },
+            "rotation_deg": 226.28336871735294,
+            "color": null,
+            "is_parked": false,
+            "is_ego": false,
+            "speed_ms": 11.791203499181435,
+            "route": []
+          },
+          {
+            "vehicle_id": "veh_0004",
+            "semantic_type": "suv",
+            "blueprint_id": null,
+            "position": {
+              "x": 57.99182241428929,
+              "y": 89.09023001327466,
+              "z": 0.0
+            },
+            "rotation_deg": 102.29664321911474,
+            "color": null,
+            "is_parked": false,
+            "is_ego": false,
+            "speed_ms": 8.222198661741489,
+            "route": []
+          },
+          {
+            "vehicle_id": "veh_0005",
+            "semantic_type": "sedan",
+            "blueprint_id": null,
+            "position": {
+              "x": -149.34493177443335,
+              "y": 176.3287500676496,
+              "z": 0.0
+            },
+            "rotation_deg": 236.36459707885885,
+            "color": null,
+            "is_parked": false,
+            "is_ego": false,
+            "speed_ms": 6.53227191944025,
+            "route": []
+          },
+          {
+            "vehicle_id": "veh_0006",
+            "semantic_type": "truck",
+            "blueprint_id": null,
+            "position": {
+              "x": -91.17369436524089,
+              "y": -116.35053219937606,
+              "z": 0.0
+            },
+            "rotation_deg": 341.57409614489245,
+            "color": null,
+            "is_parked": false,
+            "is_ego": false,
+            "speed_ms": 12.953054283344402,
+            "route": []
+          },
+          {
+            "vehicle_id": "veh_0007",
+            "semantic_type": "truck",
+            "blueprint_id": null,
+            "position": {
+              "x": -10.956131755887213,
+              "y": -165.0504078543508,
+              "z": 0.0
+            },
+            "rotation_deg": 191.71298558850742,
+            "color": null,
+            "is_parked": false,
+            "is_ego": false,
+            "speed_ms": 7.315462690233227,
+            "route": []
+          },
+          {
+            "vehicle_id": "veh_0008",
+            "semantic_type": "sedan",
+            "blueprint_id": null,
+            "position": {
+              "x": -211.65811525412002,
+              "y": -135.0386304192863,
+              "z": 0.0
+            },
+            "rotation_deg": 125.54488941649018,
+            "color": null,
+            "is_parked": false,
+            "is_ego": false,
+            "speed_ms": 8.605858452680275,
+            "route": []
+          },
+          {
+            "vehicle_id": "veh_0009",
+            "semantic_type": "sedan",
+            "blueprint_id": null,
+            "position": {
+              "x": -72.89885487047115,
+              "y": 62.06144581853056,
+              "z": 0.0
+            },
+            "rotation_deg": 232.67932179196458,
+            "color": null,
+            "is_parked": false,
+            "is_ego": false,
+            "speed_ms": 13.399700395075621,
+            "route": []
+          },
+          {
+            "vehicle_id": "veh_0010",
+            "semantic_type": "sedan",
+            "blueprint_id": null,
+            "position": {
+              "x": 30.42050550270727,
+              "y": -130.9095802476701,
+              "z": 0.0
+            },
+            "rotation_deg": 52.567908611692175,
+            "color": null,
+            "is_parked": false,
+            "is_ego": false,
+            "speed_ms": 14.52849083504436,
+            "route": []
+          },
+          {
+            "vehicle_id": "veh_0011",
+            "semantic_type": "sedan",
+            "blueprint_id": null,
+            "position": {
+              "x": -190.71202798259935,
+              "y": 139.81752702239345,
+              "z": 0.0
+            },
+            "rotation_deg": 347.89602180039054,
+            "color": null,
+            "is_parked": false,
+            "is_ego": false,
+            "speed_ms": 2.00266885904406,
+            "route": []
+          },
+          {
+            "vehicle_id": "veh_0012",
+            "semantic_type": "sedan",
+            "blueprint_id": null,
+            "position": {
+              "x": -208.87934827419951,
+              "y": -122.69565721699173,
+              "z": 0.0
+            },
+            "rotation_deg": 347.64653700559677,
+            "color": null,
+            "is_parked": false,
+            "is_ego": false,
+            "speed_ms": 14.219362528082527,
+            "route": []
+          },
+          {
+            "vehicle_id": "veh_0013",
+            "semantic_type": "truck",
+            "blueprint_id": null,
+            "position": {
+              "x": -19.71202703513481,
+              "y": 101.50026393515128,
+              "z": 0.0
+            },
+            "rotation_deg": 79.37733464526109,
+            "color": null,
+            "is_parked": false,
+            "is_ego": false,
+            "speed_ms": 7.419279139235207,
+            "route": []
+          },
+          {
+            "vehicle_id": "veh_0014",
+            "semantic_type": "sedan",
+            "blueprint_id": null,
+            "position": {
+              "x": -221.9659036778183,
+              "y": -216.78459374671257,
+              "z": 0.0
+            },
+            "rotation_deg": 45.143312775848756,
+            "color": null,
+            "is_parked": false,
+            "is_ego": false,
+            "speed_ms": 10.89329718810538,
+            "route": []
+          },
+          {
+            "vehicle_id": "veh_0015",
+            "semantic_type": "sedan",
+            "blueprint_id": null,
+            "position": {
+              "x": -128.19438172048302,
+              "y": -91.98291807712772,
+              "z": 0.0
+            },
+            "rotation_deg": 240.56946165496913,
+            "color": null,
+            "is_parked": false,
+            "is_ego": false,
+            "speed_ms": 8.717931783844184,
+            "route": []
+          },
+          {
+            "vehicle_id": "veh_0016",
+            "semantic_type": "sedan",
+            "blueprint_id": null,
+            "position": {
+              "x": 81.61633689321587,
+              "y": -181.25409096632745,
+              "z": 0.0
+            },
+            "rotation_deg": 35.269833482524476,
+            "color": null,
+            "is_parked": false,
+            "is_ego": false,
+            "speed_ms": 12.36459377807667,
+            "route": []
+          },
+          {
+            "vehicle_id": "veh_0017",
+            "semantic_type": "truck",
+            "blueprint_id": null,
+            "position": {
+              "x": 5.516970208963102,
+              "y": -223.10595804096752,
+              "z": 0.0
+            },
+            "rotation_deg": 49.937773445453296,
+            "color": null,
+            "is_parked": false,
+            "is_ego": false,
+            "speed_ms": 14.4786177809087,
+            "route": []
+          },
+          {
+            "vehicle_id": "veh_0018",
+            "semantic_type": "sedan",
+            "blueprint_id": null,
+            "position": {
+              "x": 158.4684885429749,
+              "y": -163.53038040316974,
+              "z": 0.0
+            },
+            "rotation_deg": 17.941502840541755,
+            "color": null,
+            "is_parked": false,
+            "is_ego": false,
+            "speed_ms": 5.164486883902991,
+            "route": []
+          },
+          {
+            "vehicle_id": "veh_0019",
+            "semantic_type": "sedan",
+            "blueprint_id": null,
+            "position": {
+              "x": -153.83885994468378,
+              "y": 65.68456431344384,
+              "z": 0.0
+            },
+            "rotation_deg": 225.34778034337415,
+            "color": null,
+            "is_parked": false,
+            "is_ego": false,
+            "speed_ms": 14.626262034566539,
+            "route": []
+          },
+          {
+            "vehicle_id": "veh_0020",
+            "semantic_type": "sedan",
+            "blueprint_id": null,
+            "position": {
+              "x": 73.89358701271152,
+              "y": 222.86640860916964,
+              "z": 0.0
+            },
+            "rotation_deg": 140.69336254451798,
+            "color": null,
+            "is_parked": false,
+            "is_ego": false,
+            "speed_ms": 2.1160971386118943,
+            "route": []
+          },
+          {
+            "vehicle_id": "veh_0021",
+            "semantic_type": "truck",
+            "blueprint_id": null,
+            "position": {
+              "x": 30.16027044790053,
+              "y": -235.9404186882631,
+              "z": 0.0
+            },
+            "rotation_deg": 9.97501595243753,
+            "color": null,
+            "is_parked": false,
+            "is_ego": false,
+            "speed_ms": 0.49901910499381696,
+            "route": []
+          },
+          {
+            "vehicle_id": "veh_0022",
+            "semantic_type": "sedan",
+            "blueprint_id": null,
+            "position": {
+              "x": 110.74874180890924,
+              "y": -12.87667801615683,
+              "z": 0.0
+            },
+            "rotation_deg": 355.854567455068,
+            "color": null,
+            "is_parked": false,
+            "is_ego": false,
+            "speed_ms": 10.663648010147474,
+            "route": []
+          },
+          {
+            "vehicle_id": "veh_0023",
+            "semantic_type": "sedan",
+            "blueprint_id": null,
+            "position": {
+              "x": 89.71797405464156,
+              "y": -130.81823312697145,
+              "z": 0.0
+            },
+            "rotation_deg": 87.72727251925483,
+            "color": null,
+            "is_parked": false,
+            "is_ego": false,
+            "speed_ms": 11.975746419202423,
+            "route": []
+          },
+          {
+            "vehicle_id": "veh_0024",
+            "semantic_type": "sedan",
+            "blueprint_id": null,
+            "position": {
+              "x": 229.39618765789203,
+              "y": -48.824270952592,
+              "z": 0.0
+            },
+            "rotation_deg": 3.3671305548347785,
+            "color": null,
+            "is_parked": false,
+            "is_ego": false,
+            "speed_ms": 7.630079670295896,
+            "route": []
+          },
+          {
+            "vehicle_id": "veh_0025",
+            "semantic_type": "sedan",
+            "blueprint_id": null,
+            "position": {
+              "x": -51.92801943306279,
+              "y": -61.731401985030686,
+              "z": 0.0
+            },
+            "rotation_deg": 15.490036331077626,
+            "color": null,
+            "is_parked": false,
+            "is_ego": false,
+            "speed_ms": 13.257704355045835,
+            "route": []
+          },
+          {
+            "vehicle_id": "veh_0026",
+            "semantic_type": "sedan",
+            "blueprint_id": null,
+            "position": {
+              "x": 1.4398001629353132,
+              "y": 240.19775263846964,
+              "z": 0.0
+            },
+            "rotation_deg": 156.12014148418865,
+            "color": null,
+            "is_parked": false,
+            "is_ego": false,
+            "speed_ms": 4.191916763503113,
+            "route": []
+          },
+          {
+            "vehicle_id": "veh_0027",
+            "semantic_type": "suv",
+            "blueprint_id": null,
+            "position": {
+              "x": -15.41840626996867,
+              "y": -113.48293009544915,
+              "z": 0.0
+            },
+            "rotation_deg": 297.64056990197804,
+            "color": null,
+            "is_parked": false,
+            "is_ego": false,
+            "speed_ms": 8.030257892723746,
+            "route": []
+          },
+          {
+            "vehicle_id": "veh_0028",
+            "semantic_type": "sedan",
+            "blueprint_id": null,
+            "position": {
+              "x": -32.45732745098047,
+              "y": 63.54970894943864,
+              "z": 0.0
+            },
+            "rotation_deg": 96.96127982716804,
+            "color": null,
+            "is_parked": false,
+            "is_ego": false,
+            "speed_ms": 7.349728311366174,
+            "route": []
+          },
+          {
+            "vehicle_id": "veh_0029",
+            "semantic_type": "sedan",
+            "blueprint_id": null,
+            "position": {
+              "x": 176.12466576946042,
+              "y": -133.54802487431743,
+              "z": 0.0
+            },
+            "rotation_deg": 130.04495294219495,
+            "color": null,
+            "is_parked": false,
+            "is_ego": false,
+            "speed_ms": 10.176036906717743,
+            "route": []
+          }
+        ],
+        "pedestrians": [
+          {
+            "pedestrian_id": "ped_0000",
+            "position": {
+              "x": -142.4179782974448,
+              "y": 223.71221881507944,
+              "z": 0.0
+            },
+            "rotation_deg": 190.65302084921703,
+            "walking_speed_ms": 0.9389921300304084,
+            "destination": {
+              "x": 120.61530761977832,
+              "y": 190.5931922347533,
+              "z": 0.0
+            },
+            "group_id": null,
+            "crossing_probability": 0.1,
+            "spawn_zone": "sidewalk"
+          },
+          {
+            "pedestrian_id": "ped_0001",
+            "position": {
+              "x": -245.9767878692729,
+              "y": -117.29631432958277,
+              "z": 0.0
+            },
+            "rotation_deg": 279.4715177754437,
+            "walking_speed_ms": 1.6264068826833025,
+            "destination": {
+              "x": 209.58355485743357,
+              "y": 148.14096677179668,
+              "z": 0.0
+            },
+            "group_id": null,
+            "crossing_probability": 0.1,
+            "spawn_zone": "sidewalk"
+          },
+          {
+            "pedestrian_id": "ped_0002",
+            "position": {
+              "x": 74.30799895642679,
+              "y": -139.49023996822763,
+              "z": 0.0
+            },
+            "rotation_deg": 256.0710095182821,
+            "walking_speed_ms": 1.702960252637538,
+            "destination": {
+              "x": 117.33831792020112,
+              "y": -117.22818702248216,
+              "z": 0.0
+            },
+            "group_id": null,
+            "crossing_probability": 0.1,
+            "spawn_zone": "sidewalk"
+          },
+          {
+            "pedestrian_id": "ped_0003",
+            "position": {
+              "x": 248.18082957755553,
+              "y": 0.4546840886002883,
+              "z": 0.0
+            },
+            "rotation_deg": 57.76226904989568,
+            "walking_speed_ms": 1.424545939490313,
+            "destination": {
+              "x": 103.90924226455536,
+              "y": 53.62423299709144,
+              "z": 0.0
+            },
+            "group_id": null,
+            "crossing_probability": 0.1,
+            "spawn_zone": "sidewalk"
+          },
+          {
+            "pedestrian_id": "ped_0004",
+            "position": {
+              "x": 98.30352707934696,
+              "y": -169.3708595714802,
+              "z": 0.0
+            },
+            "rotation_deg": 126.94078083323004,
+            "walking_speed_ms": 1.152788055559845,
+            "destination": {
+              "x": 15.088064426003768,
+              "y": -53.403601808774795,
+              "z": 0.0
+            },
+            "group_id": null,
+            "crossing_probability": 0.1,
+            "spawn_zone": "sidewalk"
+          },
+          {
+            "pedestrian_id": "ped_0005",
+            "position": {
+              "x": -68.64680296494188,
+              "y": 204.2537257712707,
+              "z": 0.0
+            },
+            "rotation_deg": 169.02610103973527,
+            "walking_speed_ms": 0.8938069763683589,
+            "destination": {
+              "x": 214.875138725746,
+              "y": 131.85824159626992,
+              "z": 0.0
+            },
+            "group_id": null,
+            "crossing_probability": 0.1,
+            "spawn_zone": "sidewalk"
+          }
+        ],
+        "events": [
+          {
+            "event_id": "event_0000",
+            "event_type": "lane_closure",
+            "road_id": null,
+            "lane_id": null,
+            "position": null,
+            "duration_s": 165.1389972607902,
+            "severity": 0.626752227874746,
+            "active": true,
+            "metadata": {
+              "generated_by": "ScenarioEventEngine",
+              "seed": 42
+            }
+          },
+          {
+            "event_id": "event_0001",
+            "event_type": "construction",
+            "road_id": null,
+            "lane_id": null,
+            "position": null,
+            "duration_s": 226.47918264154333,
+            "severity": 0.8671717072590404,
+            "active": true,
+            "metadata": {
+              "generated_by": "ScenarioEventEngine",
+              "seed": 42
+            }
+          },
+          {
+            "event_id": "event_0002",
+            "event_type": "parked_vehicle",
+            "road_id": null,
+            "lane_id": null,
+            "position": {
+              "x": -54.51166783009998,
+              "y": 67.33387212712046
+            },
+            "duration_s": 44.90960700805743,
+            "severity": 0.7940643771911051,
+            "active": true,
+            "metadata": {
+              "generated_by": "ScenarioEventEngine",
+              "seed": 42
+            }
+          }
+        ],
+        "sensors": [
+          {
+            "sensor_id": "camera_front",
+            "sensor_type": "rgb",
+            "position": {
+              "x": 1.5,
+              "y": 0.0,
+              "z": 1.4
+            },
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "resolution": [
+              1280,
+              720
+            ],
+            "fov": 90.0,
+            "sensor_tick": 0.1,
+            "intrinsic": null,
+            "extrinsic": null,
+            "noise_params": {}
+          }
+        ],
+        "weather_override": null,
+        "time_of_day_override": null,
+        "bounding_box": {
+          "min_x": -250.0,
+          "max_x": 250.0,
+          "min_y": -250.0,
+          "max_y": 250.0,
+          "min_z": 0.0,
+          "max_z": 50.0
+        },
+        "seeds": {
+          "world": 42,
+          "traffic": 43,
+          "pedestrian": 1632759455,
+          "weather": 45,
+          "asset": 282382530,
+          "scenario": 1012873602
+        },
+        "fallbacks": [],
+        "warnings": [],
+        "asset_resolution_stats": {
+          "exact": 0,
+          "fallback": 0
+        }
+      },
+      "plan_hash": "86fbc61eda1cbb83c073bb3da61a6bc9f16b94f31008c083c21dd9046cb89702",
+      "provenance": {
+        "country_profile_hash": "b91b60ba9f9afda2cb973e5173cf0a42ce5bf2ffb3c10b9bdd9d35296a290987",
+        "geography_hash": "f7c9a6cddd2eba5775848815836a17180bd6825ca00545628d86135b6348c50d",
+        "world_plan_hash": "86fbc61eda1cbb83c073bb3da61a6bc9f16b94f31008c083c21dd9046cb89702",
+        "asset_registry_hash": "77c9740e5d2d12ba99eac68ff0dbcd624ec9dd1571b9c193a6a67ed7a34559b1",
+        "build_version": "6.0.0",
+        "schema_version": "1.0.0",
+        "compiler_version": "1.0.0",
+        "git_commit": "unknown",
+        "world_seed": 42,
+        "traffic_seed": 43,
+        "pedestrian_seed": 1632759455,
+        "weather_seed": 45,
+        "asset_seed": 282382530,
+        "scenario_seed": 1012873602,
+        "carla_version": "0.9.16",
+        "fallbacks": [],
+        "warnings": [],
+        "errors": []
+      }
+    }
+  },
+  "build7_execution": {
+    "status_code": 200,
+    "data": {
+      "session_id": "047b9fee-49df-441f-b39b-085998bffebd",
+      "status": "READY",
+      "preflight": {
+        "passed": true,
+        "errors": [],
+        "warnings": [
+          "36 actors planned",
+          "1 sensors planned",
+          "3 events planned",
+          "Map Town01 available"
+        ],
+        "checks": [
+          {
+            "name": "timing",
+            "passed": true,
+            "message": null
+          },
+          {
+            "name": "total_simulation_seconds",
+            "passed": true,
+            "message": null
+          },
+          {
+            "name": "seeds",
+            "passed": true,
+            "message": null
+          },
+          {
+            "name": "actors",
+            "passed": true,
+            "message": "36 actors planned"
+          },
+          {
+            "name": "sensors",
+            "passed": true,
+            "message": "1 sensors planned"
+          },
+          {
+            "name": "events",
+            "passed": true,
+            "message": "3 events planned"
+          },
+          {
+            "name": "output_directory",
+            "passed": true,
+            "message": null
+          },
+          {
+            "name": "map",
+            "passed": true,
+            "message": "Map Town01 available"
+          }
+        ]
+      }
+    }
+  }
+}

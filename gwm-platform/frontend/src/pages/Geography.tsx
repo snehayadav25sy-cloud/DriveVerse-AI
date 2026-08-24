@@ -1,13 +1,26 @@
 /**
- * Geography.tsx — Build 5: Geography Engine page
+ * Geography.tsx — Build 5 + deck.gl: Geography Engine page
  */
 
 import { useState } from 'react'
-import { Globe, MapPin, Search, Loader2, CheckCircle2, XCircle, Box } from 'lucide-react'
+import { Globe, MapPin, Search, Loader2, CheckCircle2, XCircle, Box, Map } from 'lucide-react'
 import Navbar from '../components/Navbar'
-import { resolveLocation, buildMap, type ResolveResponse, type BuildResponse, type MapArtifact } from '../services/geography'
+import RoadMapCanvas from '../components/RoadMapCanvas'
+import {
+  resolveLocation,
+  buildMap,
+  fetchRoadGraph,
+  type ResolveResponse,
+  type BuildResponse,
+  type MapArtifact,
+  type GraphGeoJSONResponse,
+} from '../services/geography'
 
-type StageStatus = 'idle' | 'running' | 'done' | 'failed'
+interface BuildStage {
+  status: string
+  elapsed_ms?: number
+  [key: string]: unknown
+}
 
 const STAGES = [
   'resolve',
@@ -23,7 +36,9 @@ export default function Geography() {
   const [radius, setRadius] = useState(500)
   const [resolveResult, setResolveResult] = useState<ResolveResponse | null>(null)
   const [buildResult, setBuildResult] = useState<BuildResponse | null>(null)
+  const [graphResult, setGraphResult] = useState<GraphGeoJSONResponse | null>(null)
   const [loadingStage, setLoadingStage] = useState<string | null>(null)
+  const [loadingMap, setLoadingMap] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   async function handleResolve() {
@@ -36,8 +51,27 @@ export default function Geography() {
       if (data.status === 'failed') {
         setError(data.error || 'Resolution failed')
       }
-    } catch (e: any) {
-      setError(e?.response?.data?.detail || e?.message || 'Resolve failed')
+    } catch (e: unknown) {
+      const err = e as { response?: { data?: { detail?: string } }; message?: string }
+      setError(err?.response?.data?.detail || err?.message || 'Resolve failed')
+    }
+  }
+
+  async function handleViewMap() {
+    setError(null)
+    setGraphResult(null)
+    setLoadingMap(true)
+    try {
+      const data = await fetchRoadGraph(location, radius)
+      setGraphResult(data)
+      if (data.status === 'failed') {
+        setError(data.error || 'Graph fetch failed')
+      }
+    } catch (e: unknown) {
+      const err = e as { response?: { data?: { detail?: string } }; message?: string }
+      setError(err?.response?.data?.detail || err?.message || 'Map fetch failed')
+    } finally {
+      setLoadingMap(false)
     }
   }
 
@@ -45,6 +79,8 @@ export default function Geography() {
     setError(null)
     setBuildResult(null)
     setLoadingStage('resolve')
+    // Also kick off the map preview in parallel
+    handleViewMap()
     try {
       const data = await buildMap(location, radius)
       setBuildResult(data)
@@ -52,17 +88,19 @@ export default function Geography() {
       if (data.status === 'failed') {
         setError(data.error || 'Build failed')
       }
-    } catch (e: any) {
-      setError(e?.response?.data?.detail || e?.message || 'Build failed')
+    } catch (e: unknown) {
+      const err = e as { response?: { data?: { detail?: string } }; message?: string }
+      setError(err?.response?.data?.detail || err?.message || 'Build failed')
       setLoadingStage(null)
     }
   }
 
   function renderStageIcon(stage: string, stageResult?: BuildStage) {
     if (!stageResult) return <div className="w-2 h-2 rounded-full bg-slate-700" />
-    if (stageResult.status === 'done' || stageResult.status === 'resolved' || stageResult.status === 'complete' || stageResult.status === 'valid')
+    const s = stageResult.status
+    if (['done', 'resolved', 'complete', 'valid', 'compiled', 'built', 'downloaded', 'projected'].includes(s))
       return <CheckCircle2 size={16} className="text-emerald-400" />
-    if (stageResult.status === 'failed' || stageResult.status === 'invalid')
+    if (['failed', 'invalid'].includes(s))
       return <XCircle size={16} className="text-rose-400" />
     if (loadingStage === stage)
       return <Loader2 size={16} className="animate-spin text-brand-400" />
@@ -75,7 +113,7 @@ export default function Geography() {
     <div className="animate-fade-in">
       <Navbar title="Geography Engine" subtitle="Resolve real-world locations and generate CARLA maps" />
 
-      <div className="p-8 max-w-5xl mx-auto space-y-8">
+      <div className="p-8 max-w-6xl mx-auto space-y-8">
         {/* Input Card */}
         <div className="card p-6 space-y-5">
           <div className="flex items-center gap-3">
@@ -84,41 +122,55 @@ export default function Geography() {
             </div>
             <div>
               <h2 className="text-base font-bold text-white">Location Input</h2>
-              <p className="text-xs text-slate-500">Enter a real-world location to resolve and build</p>
+              <p className="text-xs text-slate-500">Enter a real-world location to resolve, preview, and build</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             <div className="md:col-span-2">
               <label className="block text-xs font-semibold text-slate-400 mb-1.5">Location</label>
               <input
+                id="geo-location-input"
                 type="text"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 placeholder="e.g. MG Road, Bengaluru"
-                className="w-full bg-slate-950 border border-slate-850 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-brand-500/80 focus:ring-1 focus:ring-brand-500/80 transition-all"
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-brand-500/80 focus:ring-1 focus:ring-brand-500/80 transition-all"
               />
             </div>
             <div>
               <label className="block text-xs font-semibold text-slate-400 mb-1.5">Radius</label>
               <select
+                id="geo-radius-select"
                 value={radius}
                 onChange={(e) => setRadius(Number(e.target.value))}
-                className="w-full bg-slate-950 border border-slate-850 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-brand-500/80 focus:ring-1 focus:ring-brand-500/80 transition-all"
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-brand-500/80 focus:ring-1 focus:ring-brand-500/80 transition-all"
               >
-                <option value={500}>500m</option>
-                <option value={1000}>1000m</option>
-                <option value={2000}>2000m</option>
+                <option value={500}>500 m</option>
+                <option value={1000}>1 000 m</option>
+                <option value={2000}>2 000 m</option>
               </select>
             </div>
-            <div className="flex items-end gap-2">
+            <div className="md:col-span-2 flex items-end gap-2">
               <button
+                id="geo-resolve-btn"
                 onClick={handleResolve}
                 className="flex-1 btn-primary justify-center py-2.5 text-xs"
               >
                 <Search size={14} /> Resolve
               </button>
               <button
+                id="geo-viewmap-btn"
+                onClick={handleViewMap}
+                disabled={loadingMap}
+                className="flex-1 btn-primary justify-center py-2.5 text-xs disabled:opacity-50"
+              >
+                {loadingMap
+                  ? <><Loader2 size={14} className="animate-spin" /> Loading…</>
+                  : <><Map size={14} /> View Map</>}
+              </button>
+              <button
+                id="geo-build-btn"
                 onClick={handleBuild}
                 className="flex-1 btn-primary justify-center py-2.5 text-xs"
               >
@@ -167,6 +219,33 @@ export default function Geography() {
           </div>
         )}
 
+        {/* deck.gl Road Map Panel */}
+        {(loadingMap || graphResult) && (
+          <div className="animate-fade-in">
+            {graphResult?.status === 'complete' && graphResult.geojson ? (
+              <RoadMapCanvas
+                geojson={graphResult.geojson}
+                centerLat={graphResult.center_lat!}
+                centerLon={graphResult.center_lon!}
+                nodeCount={graphResult.node_count}
+                edgeCount={graphResult.edge_count}
+                elapsedMs={graphResult.elapsed_ms}
+                loading={false}
+              />
+            ) : loadingMap ? (
+              <RoadMapCanvas
+                geojson={{ type: 'FeatureCollection', features: [] }}
+                centerLat={0}
+                centerLon={0}
+                nodeCount={0}
+                edgeCount={0}
+                elapsedMs={0}
+                loading
+              />
+            ) : null}
+          </div>
+        )}
+
         {/* Build Progress / Result */}
         {buildResult && (
           <div className="card p-6 space-y-4">
@@ -175,7 +254,7 @@ export default function Geography() {
             </h3>
             <div className="space-y-2">
               {STAGES.map((stage) => {
-                const stageResult = buildResult.stages[stage]
+                const stageResult = buildResult.stages[stage] as BuildStage | undefined
                 return (
                   <div key={stage} className="flex items-center gap-3 text-xs">
                     {renderStageIcon(stage, stageResult)}

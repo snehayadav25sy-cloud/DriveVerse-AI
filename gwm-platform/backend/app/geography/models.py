@@ -240,6 +240,7 @@ class MapArtifact(BaseModel):
     carla_map_name: Optional[str] = None
     carla_load_succeeded: Optional[bool] = None
     carla_spawn_point_count: Optional[int] = None
+    location_query: Optional[str] = None
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
 
