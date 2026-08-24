@@ -55,6 +55,17 @@ class BuildResponse(BaseModel):
     error: Optional[str] = None
 
 
+class GraphGeoJSONResponse(BaseModel):
+    status: str
+    center_lat: Optional[float] = None
+    center_lon: Optional[float] = None
+    node_count: int = 0
+    edge_count: int = 0
+    elapsed_ms: float = 0.0
+    geojson: Optional[Dict[str, Any]] = None
+    error: Optional[str] = None
+
+
 @router.post("/resolve", response_model=ResolveResponse)
 def resolve_location(req: LocationRequest):
     """
@@ -252,5 +263,106 @@ def build_map(req: LocationRequest):
         return BuildResponse(
             status="failed",
             stages=stages,
+            error=str(e),
+        )
+
+
+@router.post("/graph", response_model=GraphGeoJSONResponse)
+def build_graph_geojson(req: LocationRequest):
+    """
+    Resolve + OSM + graph only; returns a GeoJSON FeatureCollection for deck.gl.
+    Skips OpenDRIVE compilation and validation — fast path for map preview.
+    """
+    start = time.perf_counter()
+    try:
+        # Stage 1: Resolve
+        if req.latitude is not None and req.longitude is not None:
+            resolution = geocoder.resolve_location(req)
+        elif req.location:
+            resolution = geocoder.geocode(req.location)
+            if resolution is None:
+                return GraphGeoJSONResponse(
+                    status="failed",
+                    error=f"Geocoding returned no results for '{req.location}'",
+                )
+        else:
+            return GraphGeoJSONResponse(
+                status="failed",
+                error="Provide 'location' or both 'latitude' and 'longitude'",
+            )
+
+        lat = resolution.latitude
+        lon = resolution.longitude
+
+        # Stage 2: OSM
+        osm_provider = OverpassProvider()
+        raw = osm_provider.download_radius(lat, lon, req.radius_m)
+        if raw is None:
+            return GraphGeoJSONResponse(
+                status="failed",
+                error="Overpass returned no data",
+            )
+        roads = osm_provider.fetch_roads()
+        intersections = osm_provider.fetch_intersections()
+
+        # Stage 3: Graph
+        graph = build_graph_from_osm(roads, intersections)
+
+        # Serialize to GeoJSON FeatureCollection
+        features: List[Dict[str, Any]] = []
+
+        # Road edges → LineString features
+        for edge in graph.edges:
+            road = edge.road
+            # geometry stored as list of (lon, lat) tuples
+            if road.geometry and len(road.geometry) >= 2:
+                coordinates = [[pt[0], pt[1]] for pt in road.geometry]
+                features.append({
+                    "type": "Feature",
+                    "geometry": {"type": "LineString", "coordinates": coordinates},
+                    "properties": {
+                        "feature_type": "edge",
+                        "edge_id": edge.edge_id,
+                        "road_type": road.road_type,
+                        "name": road.name or "",
+                        "lanes": road.lanes,
+                        "length_m": round(edge.length_m, 1),
+                        "one_way": road.one_way,
+                        "speed_kph": road.speed_kph,
+                    },
+                })
+
+        # Nodes → Point features
+        for node in graph.nodes:
+            features.append({
+                "type": "Feature",
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [node.coordinate.longitude, node.coordinate.latitude],
+                },
+                "properties": {
+                    "feature_type": "node",
+                    "node_id": node.node_id,
+                    "node_type": node.node_type,
+                },
+            })
+
+        elapsed_ms = round((time.perf_counter() - start) * 1000, 1)
+        return GraphGeoJSONResponse(
+            status="complete",
+            center_lat=lat,
+            center_lon=lon,
+            node_count=graph.node_count(),
+            edge_count=graph.edge_count(),
+            elapsed_ms=elapsed_ms,
+            geojson={
+                "type": "FeatureCollection",
+                "features": features,
+            },
+        )
+
+    except Exception as e:
+        return GraphGeoJSONResponse(
+            status="failed",
             error=str(e),
         )
