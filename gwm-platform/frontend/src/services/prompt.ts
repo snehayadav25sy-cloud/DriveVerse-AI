@@ -85,6 +85,8 @@ export interface ParseResponse extends ScenarioConfig {
   estimate?: ScenarioEstimate | null
 }
 
+export type PromptParseResult = ParseResponse
+
 export interface GenerateResponse {
   job_id: string
   scenario: ScenarioConfig

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
@@ -16,7 +15,7 @@ export function useWorldGeneration() {
       if (!res.ok) throw new Error('Failed to generate world plan');
       return res.json();
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['world'] });
     },
   });
@@ -34,6 +33,7 @@ export function useWorldGeneration() {
     generatePlan: planMutation.mutate,
     generating: planMutation.isPending,
     worldData: planMutation.data,
+    error: planMutation.error,
     fetchWorlds: getWorld.refetch,
   };
 }

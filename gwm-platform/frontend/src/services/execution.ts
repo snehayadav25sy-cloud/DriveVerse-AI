@@ -1,11 +1,8 @@
-import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 export function useExecution() {
-  const qc = useQueryClient();
-
   const startMutation = useMutation({
     mutationFn: async (payload: any) => {
       const res = await fetch(`${API_BASE}/execution/start`, {

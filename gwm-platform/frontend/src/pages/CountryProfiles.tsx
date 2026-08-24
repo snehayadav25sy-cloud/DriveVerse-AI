@@ -7,10 +7,8 @@ import {
   updateCountry,
   deleteCountry,
   getCountry,
-  type BackendCountryProfile
 } from '../services/countries'
-import { Car, FileCode, Check, AlertTriangle, Trash2, Edit3, Plus, X, Globe, Compass } from 'lucide-react'
-import React from 'react'
+import { FileCode, Check, AlertTriangle, Trash2, Edit3, Plus, X, Globe } from 'lucide-react'
 
 const FLAG_MAP: Record<string, string> = {
   india: '🇮🇳',
@@ -46,7 +44,7 @@ export default function CountryProfiles() {
         return createCountry(yamlInput)
       }
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['countries'] })
       setSuccessMsg(editingId ? 'Profile updated successfully!' : 'Country profile created successfully!')
       setErrorMsg('')

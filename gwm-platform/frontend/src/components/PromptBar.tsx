@@ -76,7 +76,7 @@ function ConfidenceChip({
 
 // ── Main component ────────────────────────────────────────────────────────────
 
-export default function PromptBar({ onApply, projects = [] }: PromptBarProps) {
+export default function PromptBar({ onApply, projects: _projects = [] }: PromptBarProps) {
   const [prompt, setPrompt]       = useState('')
   const [expanded, setExpanded]   = useState(false)
   const [result, setResult]       = useState<PromptParseResult | null>(null)
@@ -132,7 +132,7 @@ export default function PromptBar({ onApply, projects = [] }: PromptBarProps) {
   const handleApply = () => {
     if (!result || !onApply) return
     onApply({
-      map:           result.map,
+      map:           result.carla_map || '',
       sensors:       result.sensors,
       frames:        result.frames,
       export_format: result.export_format as 'kitti' | 'coco' | 'nuscenes',
@@ -248,7 +248,7 @@ export default function PromptBar({ onApply, projects = [] }: PromptBarProps) {
               {/* Config preview grid */}
               <div className="grid grid-cols-2 gap-2 text-xs">
                 {[
-                  { label: 'Map',     value: result.map,                    conf: result.confidence.map },
+                  { label: 'Map',     value: result.carla_map || 'Default', conf: result.confidence.carla_map ?? 1 },
                   { label: 'Format',  value: result.export_format.toUpperCase(), conf: result.confidence.export_format },
                   { label: 'Frames',  value: `${result.frames} frames`,    conf: result.confidence.frames },
                   { label: 'Sensors', value: result.sensors.join(', '),    conf: result.confidence.sensors },

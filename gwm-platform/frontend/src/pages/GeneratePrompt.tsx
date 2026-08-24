@@ -142,8 +142,6 @@ export default function GeneratePrompt() {
     }
   }
 
-  const lastAssistant = [...messages].reverse().find((m) => m.role === 'assistant')
-
   return (
     <div className="animate-fade-in h-screen flex flex-col">
       <Navbar title="AI Prompt Engine" subtitle="Describe a scenario in plain English" />

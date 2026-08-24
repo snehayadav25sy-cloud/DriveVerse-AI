@@ -7,7 +7,7 @@
 
 import { useState } from 'react'
 import {
-  MapPin, Cloud, Sun, Moon, Sunset, Sunrise, Car, Users, Camera,
+  MapPin, Car,
   ChevronDown, ChevronUp, CheckCircle2, AlertCircle, Info,
   Gauge, Clock, HardDrive, Cpu
 } from 'lucide-react'
